@@ -1,0 +1,8 @@
+======Project 1======
+------------ 1st meeting -------------
+  Hoàn: 
+    Exceptions: Syscall, Pagefault, Readonly, BusError
+    Functions: readNum, printNum
+  Hào:
+    Exceptions: Address, Overflow, IllegalInstr, NumException
+    Functions: readChar, printChar
