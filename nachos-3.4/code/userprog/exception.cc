@@ -24,7 +24,8 @@
 #include "copyright.h"
 #include "system.h"
 #include "syscall.h"
-
+#include "directory.h"
+#include "machine.h"
 //----------------------------------------------------------------------
 // ExceptionHandler
 // 	Entry point into the Nachos kernel.  Called when a user program
@@ -60,4 +61,84 @@ ExceptionHandler(ExceptionType which)
 	printf("Unexpected user mode exception %d %d\n", which, type);
 	ASSERT(FALSE);
     }
+
+    switch (which) {
+        case NoException: // khong co exception, dung chuong trinh
+            break;
+        case SyscallException:
+        {
+            switch (type) {
+                case SC_Halt:
+                    DEBUG('a', "Shutdown, initiated by user program.\n");
+                    interrupt->Halt();
+                    break;
+                case SC_Exit:
+                    DEBUG('a', "Exit, initiated by user program.\n");
+                    interrupt->Halt();
+                    break;
+                case SC_Exec:
+                    DEBUG('a', "Exec, initiated by user program.\n");
+                    do_Exec();
+                    break;
+                case SC_Join:
+                    DEBUG('a', "Join, initiated by user program.\n");
+                    do_Join();
+                    break;
+                case SC_Create:
+                    DEBUG('a', "Create, initiated by user program.\n");
+                    do_Create();
+                    break;
+                case SC_Open:
+                    DEBUG('a', "Open, initiated by user program.\n");
+                    do_Open();
+                    break;
+                case SC_Read:
+                    DEBUG('a', "Read, initiated by user program.\n");
+                    do_Read();
+                    break;
+                case SC_Write:
+                    DEBUG('a', "Write, initiated by user program.\n");
+                    do_Write();
+                    break;
+                case SC_Close:
+                    DEBUG('a', "Close, initiated by user program.\n");
+                    do_Close();
+                    break;
+                case SC_Fork:
+                    DEBUG('a', "Fork, initiated by user program.\n");
+                    do_Fork();
+                    break;
+                case SC_Yield:
+                    DEBUG('a', "Yield, initiated by user program.\n");
+                    do_Yield();
+                    break;
+                case SC_CreateFile:
+                    DEBUG('a', "CreateFile, initiated by user program.\n");
+                    do_CreateFile();
+                    break;
+                case SC_OpenFile:
+                    DEBUG('a', "OpenFile, initiated by user program.\n");
+                    do_OpenFile();
+                    break;
+                case SC_ReadFile:
+                    DEBUG('a', "ReadFile, initiated by user program.\n");
+                    do_ReadFile();
+        }
+        /* print the error and halt the machine*/
+        case PageFaultException:
+            printf("PageFaultException\n");
+            ASSERT(FALSE);
+            break;
+        case ReadOnlyException:
+            printf("ReadOnlyException\n");
+            ASSERT(FALSE);
+            break;
+        case BusErrorException:
+            printf("BusErrorException\n");
+            ASSERT(FALSE);
+            break;
+        
+    }
 }
+
+
