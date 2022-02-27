@@ -56,9 +56,46 @@ ExceptionHandler(ExceptionType which)
     DEBUG(dbgSys, "Received Exception " << which << " type: " << type << "\n");
 
     switch (which) {
+	case NoException: 
+		break;
+	case PageFaultException:
+		printf("No valid translation found\n");
+		ASSERT(FALSE);
+		break;
+	case ReadOnlyException:
+		printf("Write attempted to page marked 'read-only'\n");
+		ASSERT(FALSE);
+		break;
+	case BusErrorException:
+		printf("Translation resulted in an invalid physical address\n");
+		ASSERT(FALSE);
+		break;
     case SyscallException:
-      switch(type) {
-      case SC_Halt:
+		switch(type) {
+		case SC_Halt:
+			DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
+			SysHalt();
+			ASSERTNOTREACHED();
+			break;
+		case SC_Exec:
+		case SC_Exit:
+		case SC_Join:
+		case SC_Create:
+		case SC_Remove:
+		case SC_Open:
+		case SC_Read:
+		case SC_Write:
+		case SC_Seek:
+		case SC_Close:
+		case SC_ThreadFork:
+		case SC_ThreadYield:
+		case SC_ExecV:
+		case SC_ThreadExit:
+		case SC_ThreadJoin:
+			DEBUG(dbgSys, "System call invoked.\n");
+			kernel->currentThread->Finish();
+			ASSERTNOTREACHED();
+			break;
 	DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
 
 	SysHalt();
@@ -106,4 +143,44 @@ ExceptionHandler(ExceptionType which)
       break;
     }
     ASSERTNOTREACHED();
+
+	
 }
+
+int readNum() 
+{
+	char ch;
+	int num = 0;
+	while (1) {
+		ch = kernel->machine->ReadRegister(4);
+		if (ch == '\n') {
+			break;
+		}
+		else if (ch == '\0') {
+			break;
+		}
+		else {
+			num = num * 10 + (ch - '0');
+			kernel->machine->WriteRegister(4, kernel->machine->ReadRegister(4) + 1);
+		}
+	}
+	return num;
+}
+
+void printNum(int number)
+{
+	int num = number;
+	int count = 0;
+	while (num > 0) {
+		num = num / 10;
+		count++;
+	}
+	for (int i = 0; i < count; i++) {
+		int digit = number % 10;
+		kernel->machine->WriteRegister(4, digit + '0');
+		number = number / 10;
+	}
+	kernel->machine->WriteRegister(4, '\n');
+}
+
+
