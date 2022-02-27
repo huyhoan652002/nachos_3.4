@@ -117,7 +117,7 @@
 #
 #	in the build directory.
 #
-#       Note that is is always safe to do "make depend" followed by
+#       Note that it is always safe to do "make depend" followed by
 # 	"make nachos", so if you are not sure what changes you have
 #	made, do "make depend".
 #
