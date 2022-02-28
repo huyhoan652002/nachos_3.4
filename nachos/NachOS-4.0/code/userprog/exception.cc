@@ -183,4 +183,24 @@ void printNum(int number)
 	kernel->machine->WriteRegister(4, '\n');
 }
 
+int RandomNum()
+{
+	// system call return a random number
+	return rand() % 100;
+}
+
+void ReadString(char[] buffer, int length)
+{
+	int i = 0;
+	while (i < length) {
+		buffer[i] = kernel->machine->ReadRegister(4);
+		if (buffer[i] == '\0') {
+			break;
+		}
+		else {
+			kernel->machine->WriteRegister(4, kernel->machine->ReadRegister(4) + 1);
+			i++;
+		}
+	}
+}
 
