@@ -78,19 +78,80 @@ ExceptionHandler(ExceptionType which)
 			ASSERTNOTREACHED();
 			break;
 		case SC_Exec:
+			DEBUG(dbgSys, "Exec system call.\n");
+			/*
+			SysExec((char *)kernel->machine->ReadRegister(4));
+			kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+			kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+			*/
 		case SC_Exit:
+			DEBUG(dbgSys, "Exit system call.\n");
+			//SysExit();
+			ASSERTNOTREACHED();
+			break;
 		case SC_Join:
+			DEBUG(dbgSys, "Join system call.\n");
+			//SysJoin();
+			ASSERTNOTREACHED();
+			break;
 		case SC_Create:
+			/*
+			DEBUG(dbgSys, "Create system call.\n");
+			SysCreate((char *)kernel->machine->ReadRegister(4), (int)kernel->machine->ReadRegister(5));
+			kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+			kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+			break;
+			*/
 		case SC_Remove:
+			DEBUG(dbgSys, "Remove system call.\n");
+			//SysRemove((char *)kernel->machine->ReadRegister(4));
+			ASSERTNOTREACHED();
+			break;
 		case SC_Open:
+			DEBUG(dbgSys, "Open system call.\n");
+			//SysOpen((char *)kernel->machine->ReadRegister(4));
+			ASSERTNOTREACHED();
+			break;
 		case SC_Read:
+			DEBUG(dbgSys, "Read system call.\n");
+			//SysRead((char *)kernel->machine->ReadRegister(4), (char *)kernel->machine->ReadRegister(5), (int)kernel->machine->ReadRegister(6));
+			ASSERTNOTREACHED();
+			break;
 		case SC_Write:
+			DEBUG(dbgSys, "Write system call.\n");
+			//SysWrite((char *)kernel->machine->ReadRegister(4), (char *)kernel->machine->ReadRegister(5), (int)kernel->machine->ReadRegister(6));
+			ASSERTNOTREACHED();
+			break;
 		case SC_Seek:
+			DEBUG(dbgSys, "Seek system call.\n");
+			//SysSeek((int)kernel->machine->ReadRegister(4), (int)kernel->machine->ReadRegister(5));
+			ASSERTNOTREACHED();
+			break;
 		case SC_Close:
+			DEBUG(dbgSys, "Close system call.\n");
+			//SysClose((int)kernel->machine->ReadRegister(4));
+			ASSERTNOTREACHED();
+			break;
 		case SC_ThreadFork:
+			DEBUG(dbgSys, "ThreadFork system call.\n");
+			//SysThreadFork((char *)kernel->machine->ReadRegister(4));
+			ASSERTNOTREACHED();
+			break;
 		case SC_ThreadYield:
+			DEBUG(dbgSys, "ThreadYield system call.\n");
+			//SysThreadYield();
+			ASSERTNOTREACHED();
+			break;
 		case SC_ExecV:
+			DEBUG(dbgSys, "ExecV system call.\n");
+			//SysExecV((char *)kernel->machine->ReadRegister(4));
+			ASSERTNOTREACHED();
+			break;
 		case SC_ThreadExit:
+			DEBUG(dbgSys, "ThreadExit system call.\n");
+			//SysThreadExit();
+			ASSERTNOTREACHED();
+			break;
 		case SC_ThreadJoin:
 			DEBUG(dbgSys, "System call invoked.\n");
 			kernel->currentThread->Finish();
@@ -202,5 +263,15 @@ void ReadString(char buffer[], int length)
 			i++;
 		}
 	}
+}
+
+void PrintString(char buffer[]) 
+{
+	int i = 0;
+	while (buffer[i] != '\0') {
+		kernel->machine->WriteRegister(4, buffer[i]);
+		i++;
+	}
+	kernel->machine->WriteRegister(4, '\n');
 }
 
