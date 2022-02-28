@@ -189,7 +189,7 @@ int RandomNum()
 	return rand() % 100;
 }
 
-void ReadString(char[] buffer, int length)
+void ReadString(char buffer[], int length)
 {
 	int i = 0;
 	while (i < length) {
