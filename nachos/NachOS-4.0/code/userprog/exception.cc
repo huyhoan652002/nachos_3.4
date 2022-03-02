@@ -204,6 +204,7 @@ ExceptionHandler(ExceptionType which)
 	
 }
 
+// readnum means read the number of characters in the file and store it in the buffer pointed to by buffer 
 int readNum() 
 {
 	char ch;
@@ -224,6 +225,7 @@ int readNum()
 	return num;
 }
 
+// printNum methods means print the number of characters in the file and store it in the buffer pointed to by buffer
 void printNum(int number)
 {
 	int num = number;
@@ -246,6 +248,7 @@ int RandomNum()
 	return rand() % 100;
 }
 
+// readString method means that read the string in the file and store it in the buffer pointed to by buffer
 void ReadString(char buffer[], int length)
 {
 	int i = 0;
@@ -261,6 +264,7 @@ void ReadString(char buffer[], int length)
 	}
 }
 
+// printString means that the string in the file and store it in the buffer pointed to by buffer
 void PrintString(char buffer[]) 
 {
 	int i = 0;
