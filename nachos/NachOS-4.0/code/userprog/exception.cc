@@ -60,7 +60,7 @@ ExceptionHandler(ExceptionType which)
 		break;
 	case PageFaultException:
 		printf("No valid translation found\n");
-		ASSERT(FALSE);
+		ASSERT(FALSE); // assert means something is wrong, but we're not trying to fix it here so we can just ignore it and keep going (we'll crash later if we really want to fix it)
 		break;
 	case ReadOnlyException:
 		printf("Write attempted to page marked 'read-only'\n");
@@ -75,15 +75,10 @@ ExceptionHandler(ExceptionType which)
 		case SC_Halt:
 			DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
 			SysHalt();
-			ASSERTNOTREACHED();
+			ASSERTNOTREACHED(); // ASSERTNOTREACHED() means something is wrong, but we're not trying to fix it here so we can just ignore it and keep going (we'll crash later if we really want to fix it)
 			break;
 		case SC_Exec:
 			DEBUG(dbgSys, "Exec system call.\n");
-			/*
-			SysExec((char *)kernel->machine->ReadRegister(4));
-			kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
-			kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
-			*/
 		case SC_Exit:
 			DEBUG(dbgSys, "Exit system call.\n");
 			//SysExit();
@@ -95,8 +90,9 @@ ExceptionHandler(ExceptionType which)
 			ASSERTNOTREACHED();
 			break;
 		case SC_Create:
-			/*
+			
 			DEBUG(dbgSys, "Create system call.\n");
+			/*
 			SysCreate((char *)kernel->machine->ReadRegister(4), (int)kernel->machine->ReadRegister(5));
 			kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
 			kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
