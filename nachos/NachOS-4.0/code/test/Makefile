@@ -38,10 +38,10 @@
 #           and edit Makefile.dep in this directory before you
 #           can build the test programs.
 #
-#    Nachos assumes that the location of the program startup routine (the
-# 	location the kernel jumps to when the program initially starts up)
-#       is at location 0.  This means: start.o must be the first .o passed 
-# 	to ld, in order for the routine "Start" to be loaded at location 0
+#    Nachos assumes that the location of the program startup routine (the		//////	Important note
+# 	location the kernel jumps to when the program initially starts up)		//////	Important note
+#       is at location 0.  This means: start.o must be the first .o passed 		//////	Important note
+# 	to ld, in order for the routine "Start" to be loaded at location 0		//////	Important note
 #
 #    When you make the test programs, you will see messages like these:
 #		numsections 3 

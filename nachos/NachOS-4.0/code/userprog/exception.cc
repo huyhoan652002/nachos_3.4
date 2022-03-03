@@ -1,4 +1,4 @@
-// exception.cc 
+// exception.cc
 //	Entry point into the Nachos kernel from user programs.
 //	There are two kinds of things that can cause control to
 //	transfer back to here from user code:
@@ -9,7 +9,7 @@
 //
 //	exceptions -- The user code does something that the CPU can't handle.
 //	For instance, accessing memory that doesn't exist, arithmetic errors,
-//	etc.  
+//	etc.
 //
 //	Interrupts (which can also cause control to transfer from user
 //	code into the Nachos kernel) are handled elsewhere.
@@ -18,7 +18,7 @@
 // Everything else core dumps.
 //
 // Copyright (c) 1992-1996 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
+// All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
 #include "copyright.h"
@@ -39,24 +39,24 @@
 //		arg3 -- r6
 //		arg4 -- r7
 //
-//	The result of the system call, if any, must be put back into r2. 
+//	The result of the system call, if any, must be put back into r2.
 //
 // If you are handling a system call, don't forget to increment the pc
 // before returning. (Or else you'll loop making the same system call forever!)
 //
-//	"which" is the kind of exception.  The list of possible exceptions 
+//	"which" is the kind of exception.  The list of possible exceptions
 //	is in machine.h.
 //----------------------------------------------------------------------
 
-void
-ExceptionHandler(ExceptionType which)
+void ExceptionHandler(ExceptionType which)
 {
-    int type = kernel->machine->ReadRegister(2);
+	int type = kernel->machine->ReadRegister(2);
 
-    DEBUG(dbgSys, "Received Exception " << which << " type: " << type << "\n");
+	DEBUG(dbgSys, "Received Exception " << which << " type: " << type << "\n");
 
-    switch (which) {
-	case NoException: 
+	switch (which)
+	{
+	case NoException:
 		break;
 	case PageFaultException:
 		printf("No valid translation found\n");
@@ -70,8 +70,9 @@ ExceptionHandler(ExceptionType which)
 		printf("Translation resulted in an invalid physical address\n");
 		ASSERT(FALSE);
 		break;
-    case SyscallException:
-		switch(type) {
+	case SyscallException:
+		switch (type)
+		{
 		case SC_Halt:
 			DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
 			SysHalt();
@@ -81,16 +82,16 @@ ExceptionHandler(ExceptionType which)
 			DEBUG(dbgSys, "Exec system call.\n");
 		case SC_Exit:
 			DEBUG(dbgSys, "Exit system call.\n");
-			//SysExit();
+			// SysExit();
 			ASSERTNOTREACHED();
 			break;
 		case SC_Join:
 			DEBUG(dbgSys, "Join system call.\n");
-			//SysJoin();
+			// SysJoin();
 			ASSERTNOTREACHED();
 			break;
 		case SC_Create:
-			
+
 			DEBUG(dbgSys, "Create system call.\n");
 			/*
 			SysCreate((char *)kernel->machine->ReadRegister(4), (int)kernel->machine->ReadRegister(5));
@@ -100,52 +101,52 @@ ExceptionHandler(ExceptionType which)
 			*/
 		case SC_Remove:
 			DEBUG(dbgSys, "Remove system call.\n");
-			//SysRemove((char *)kernel->machine->ReadRegister(4));
+			// SysRemove((char *)kernel->machine->ReadRegister(4));
 			ASSERTNOTREACHED();
 			break;
 		case SC_Open:
 			DEBUG(dbgSys, "Open system call.\n");
-			//SysOpen((char *)kernel->machine->ReadRegister(4));
+			// SysOpen((char *)kernel->machine->ReadRegister(4));
 			ASSERTNOTREACHED();
 			break;
 		case SC_Read:
 			DEBUG(dbgSys, "Read system call.\n");
-			//SysRead((char *)kernel->machine->ReadRegister(4), (char *)kernel->machine->ReadRegister(5), (int)kernel->machine->ReadRegister(6));
+			// SysRead((char *)kernel->machine->ReadRegister(4), (char *)kernel->machine->ReadRegister(5), (int)kernel->machine->ReadRegister(6));
 			ASSERTNOTREACHED();
 			break;
 		case SC_Write:
 			DEBUG(dbgSys, "Write system call.\n");
-			//SysWrite((char *)kernel->machine->ReadRegister(4), (char *)kernel->machine->ReadRegister(5), (int)kernel->machine->ReadRegister(6));
+			// SysWrite((char *)kernel->machine->ReadRegister(4), (char *)kernel->machine->ReadRegister(5), (int)kernel->machine->ReadRegister(6));
 			ASSERTNOTREACHED();
 			break;
 		case SC_Seek:
 			DEBUG(dbgSys, "Seek system call.\n");
-			//SysSeek((int)kernel->machine->ReadRegister(4), (int)kernel->machine->ReadRegister(5));
+			// SysSeek((int)kernel->machine->ReadRegister(4), (int)kernel->machine->ReadRegister(5));
 			ASSERTNOTREACHED();
 			break;
 		case SC_Close:
 			DEBUG(dbgSys, "Close system call.\n");
-			//SysClose((int)kernel->machine->ReadRegister(4));
+			// SysClose((int)kernel->machine->ReadRegister(4));
 			ASSERTNOTREACHED();
 			break;
 		case SC_ThreadFork:
 			DEBUG(dbgSys, "ThreadFork system call.\n");
-			//SysThreadFork((char *)kernel->machine->ReadRegister(4));
+			// SysThreadFork((char *)kernel->machine->ReadRegister(4));
 			ASSERTNOTREACHED();
 			break;
 		case SC_ThreadYield:
 			DEBUG(dbgSys, "ThreadYield system call.\n");
-			//SysThreadYield();
+			// SysThreadYield();
 			ASSERTNOTREACHED();
 			break;
 		case SC_ExecV:
 			DEBUG(dbgSys, "ExecV system call.\n");
-			//SysExecV((char *)kernel->machine->ReadRegister(4));
+			// SysExecV((char *)kernel->machine->ReadRegister(4));
 			ASSERTNOTREACHED();
 			break;
 		case SC_ThreadExit:
 			DEBUG(dbgSys, "ThreadExit system call.\n");
-			//SysThreadExit();
+			// SysThreadExit();
 			ASSERTNOTREACHED();
 			break;
 		case SC_ThreadJoin:
@@ -153,71 +154,91 @@ ExceptionHandler(ExceptionType which)
 			kernel->currentThread->Finish();
 			ASSERTNOTREACHED();
 			break;
-	DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
+			DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
 
-	SysHalt();
+			SysHalt();
 
-	ASSERTNOTREACHED();
-	break;
+			ASSERTNOTREACHED();
+			break;
 
-      case SC_Add:
-	DEBUG(dbgSys, "Add " << kernel->machine->ReadRegister(4) << " + " << kernel->machine->ReadRegister(5) << "\n");
-	
-	/* Process SysAdd Systemcall*/
-	int result;
-	result = SysAdd(/* int op1 */(int)kernel->machine->ReadRegister(4),
-			/* int op2 */(int)kernel->machine->ReadRegister(5));
+		case SC_Add:
+			DEBUG(dbgSys, "Add " << kernel->machine->ReadRegister(4) << " + " << kernel->machine->ReadRegister(5) << "\n");
 
-	DEBUG(dbgSys, "Add returning with " << result << "\n");
-	/* Prepare Result */
-	kernel->machine->WriteRegister(2, (int)result);
-	
-	/* Modify return point */
-	{
-	  /* set previous programm counter (debugging only)*/
-	  kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+			/* Process SysAdd Systemcall*/
+			int result;
+			result = SysAdd(/* int op1 */ (int)kernel->machine->ReadRegister(4),
+							/* int op2 */ (int)kernel->machine->ReadRegister(5));
 
-	  /* set programm counter to next instruction (all Instructions are 4 byte wide)*/
-	  kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
-	  
-	  /* set next programm counter for brach execution */
-	  kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg)+4);
+			DEBUG(dbgSys, "Add returning with " << result << "\n");
+			/* Prepare Result */
+			kernel->machine->WriteRegister(2, (int)result);
+
+			/* Modify return point */
+			{
+				/* set previous programm counter (debugging only)*/
+				kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+
+				/* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+				kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+
+				/* set next programm counter for brach execution */
+				kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
+			}
+
+			return;
+
+			ASSERTNOTREACHED();
+
+			break;
+
+		default:
+			cerr << "Unexpected system call " << type << "\n";
+			break;
+		}
+		break;
+
+	case AddressErrorException:
+		//	Add your implementation here
+		break;
+	case OverflowException:
+		//	Add your implementation here
+		break;
+
+	case IllegalInstrException:
+		//	Add your implementation here
+		cerr << "Illegal Instruction.\n";
+		break;
+
+	case NumExceptionTypes:
+		//	Add your implementation here
+		cerr << "Unexpected Exception.\n";
+		break;
+		
+	default:
+		cerr << "Unexpected user mode exception" << (int)which << "\n";
+		break;
 	}
-
-	return;
-	
 	ASSERTNOTREACHED();
-
-	break;
-
-      default:
-	cerr << "Unexpected system call " << type << "\n";
-	break;
-      }
-      break;
-    default:
-      cerr << "Unexpected user mode exception" << (int)which << "\n";
-      break;
-    }
-    ASSERTNOTREACHED();
-
-	
 }
 
-// readnum means read the number of characters in the file and store it in the buffer pointed to by buffer 
-int readNum() 
+// readnum means read the number of characters in the file and store it in the buffer pointed to by buffer
+int readNum()
 {
 	char ch;
 	int num = 0;
-	while (1) {
+	while (1)
+	{
 		ch = kernel->machine->ReadRegister(4);
-		if (ch == '\n') {
+		if (ch == '\n')
+		{
 			break;
 		}
-		else if (ch == '\0') {
+		else if (ch == '\0')
+		{
 			break;
 		}
-		else {
+		else
+		{
 			num = num * 10 + (ch - '0');
 			kernel->machine->WriteRegister(4, kernel->machine->ReadRegister(4) + 1);
 		}
@@ -230,11 +251,13 @@ void printNum(int number)
 {
 	int num = number;
 	int count = 0;
-	while (num > 0) {
+	while (num > 0)
+	{
 		num = num / 10;
 		count++;
 	}
-	for (int i = 0; i < count; i++) {
+	for (int i = 0; i < count; i++)
+	{
 		int digit = number % 10;
 		kernel->machine->WriteRegister(4, digit + '0');
 		number = number / 10;
@@ -252,12 +275,15 @@ int RandomNum()
 void ReadString(char buffer[], int length)
 {
 	int i = 0;
-	while (i < length) {
+	while (i < length)
+	{
 		buffer[i] = kernel->machine->ReadRegister(4);
-		if (buffer[i] == '\0') {
+		if (buffer[i] == '\0')
+		{
 			break;
 		}
-		else {
+		else
+		{
 			kernel->machine->WriteRegister(4, kernel->machine->ReadRegister(4) + 1);
 			i++;
 		}
@@ -265,13 +291,13 @@ void ReadString(char buffer[], int length)
 }
 
 // printString means that the string in the file and store it in the buffer pointed to by buffer
-void PrintString(char buffer[]) 
+void PrintString(char buffer[])
 {
 	int i = 0;
-	while (buffer[i] != '\0') {
+	while (buffer[i] != '\0')
+	{
 		kernel->machine->WriteRegister(4, buffer[i]);
 		i++;
 	}
 	kernel->machine->WriteRegister(4, '\n');
 }
-
