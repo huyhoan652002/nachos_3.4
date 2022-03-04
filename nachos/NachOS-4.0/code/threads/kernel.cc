@@ -184,6 +184,53 @@ Kernel::ConsoleTest() {
 
 }
 
+void Kernel::PrintBuffer(char *buffer, int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+       synchConsoleOut->PutChar(buffer[i]);
+    }
+}
+
+void Kernel::ReadNum()
+{
+    char buffer[10];
+    int size = 0;
+    int num = 0;
+    do
+    {
+        buffer[size] = synchConsoleIn->GetChar();
+        size++;
+    } while (buffer[size - 1] != '\n');
+    buffer[size - 1] = '\0';
+    num = atoi(buffer);
+    cout << "num = " << num << endl;
+}
+
+void Kernel::PrintNum(int number)
+{
+    char buffer[10];
+    sprintf(buffer, "%d", number);
+    PrintBuffer(buffer, strlen(buffer));
+}
+
+void Kernel::ReadString(char *buffer, int size)
+{
+    int i = 0;
+    do
+    {
+        buffer[i] = synchConsoleIn->GetChar();
+        i++;
+    } while (buffer[i - 1] != '\n');
+    buffer[i - 1] = '\0';
+}
+
+void Kernel::RandomNumber()
+{
+    int num = random() % 100;
+    PrintNum(num);
+}
+
 //----------------------------------------------------------------------
 // Kernel::NetworkTest
 //      Test whether the post office is working. On machines #0 and #1, do:

@@ -81,9 +81,63 @@ ExecV:
 	syscall
 	j	$31
 	.end ExecV
+/* printString */
+	.globl PrintString
+	.ent	PrintString
+PrintString:
+	addiu $2,$0,SC_PrintString
+	syscall
+	j	$31
+	.end PrintString
 
 	.globl Join
 	.ent	Join
+/*
+/* ReadNum syscall */
+	.globl ReadNum
+	.ent	ReadNum
+ReadNum:
+	addiu $2,$0,SC_ReadNum
+	syscall
+	j	$31
+	.end ReadNum
+
+	.globl Join
+	.ent	Join
+/* printNum syscall */
+	.globl PrintNum
+	.ent	PrintNum
+PrintNum:
+	addiu $2,$0,SC_PrintNum
+	syscall
+	j	$31
+	.end PrintNum
+
+	.globl Join
+	.ent	Join
+/* RandomNumber syscall */
+.globl RandomNumber
+	.ent	RandomNumber
+RandomNumber:
+	addiu $2,$0,SC_RandomNumber
+	syscall
+	j	$31
+	.end RandomNumber
+
+	.globl Join
+	.ent	Join
+/* ReadString syscall */
+	.globl ReadString
+	.ent	ReadString
+ReadString:
+	addiu $2,$0,SC_ReadString
+	syscall
+	j	$31
+	.end ReadString
+
+	.globl Join
+	.ent	Join
+*/
 Join:
 	addiu $2,$0,SC_Join
 	syscall

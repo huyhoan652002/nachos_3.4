@@ -36,7 +36,12 @@
 #define SC_ThreadJoin   15
 
 #define SC_Add		42
-
+#define SC_PrintString 43
+#define SC_ReadNum         44
+#define SC_PrintNum             45
+#define SC_PrintString 46
+#define SC_RandomNumber 47
+#define SC_ReadString 48
 #ifndef IN_ASM
 
 /* The system call interface.  These are the operations the Nachos
@@ -173,6 +178,21 @@ int ThreadJoin(ThreadId id);
  * Deletes current thread and returns ExitCode to every waiting lokal thread.
  */
 void ThreadExit(int ExitCode);	
+
+// readnum means read the number of characters in the file and store it in the buffer pointed to by buffer
+int readNum();
+
+// printNum methods means print the number of characters in the file and store it in the buffer pointed to by buffer
+void printNum(int number);
+
+// random number generation
+int RandomNum();
+
+// readString method means that read the string in the file and store it in the buffer pointed to by buffer
+void ReadString(char *buffer, int length);
+
+// printString means that the string in the file and store it in the buffer pointed to by buffer
+void PrintString(char *buffer, int size);
 
 #endif /* IN_ASM */
 

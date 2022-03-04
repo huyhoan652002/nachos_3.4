@@ -48,6 +48,40 @@
 //	is in machine.h.
 //----------------------------------------------------------------------
 
+char *User2System(int virtAddr, int limit)
+{
+	int i; // index
+	int oneChar;
+	char *kernelBuf = NULL;
+	kernelBuf = new char[limit + 1]; // need for terminal string
+	if (kernelBuf == NULL)
+		return kernelBuf;
+	memset(kernelBuf, 0, limit + 1);
+	// printf("\n Filename u2s:");
+	for (i = 0; i < limit; i++)
+	{
+		kernel->machine->ReadMem(virtAddr + i, 1, &oneChar);
+		kernelBuf[i] = (char)oneChar;
+		// printf("%c",kernelBuf[i]);
+		if (oneChar == 0)
+			break;
+	}
+	return kernelBuf;
+}
+
+void ProgramCounter()
+{
+	/* set previous programm counter (debugging only)*/
+				kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+
+				/* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+				kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+
+				/* set next programm counter for brach execution */
+				kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
+}
+
+
 void ExceptionHandler(ExceptionType which)
 {
 	int type = kernel->machine->ReadRegister(2);
@@ -190,7 +224,46 @@ void ExceptionHandler(ExceptionType which)
 			ASSERTNOTREACHED();
 
 			break;
-
+		// printString means that the string in the file and store it in the buffer pointed to by buffer
+		case SC_PrintString:
+		{
+			int addr = kernel->machine->ReadRegister(4);
+			char *buffer = User2System(addr, 200);
+			kernel->PrintBuffer(buffer, 200);
+			delete[] buffer;
+			ProgramCounter();
+			break;
+		}
+		// readnum means read the number of characters in the file and store it in the buffer pointed to by buffer
+		case SC_ReadNum: {
+			int addr = kernel->machine->ReadRegister(4);
+			char *buffer = User2System(addr, 200);
+			kernel->ReadNum();
+			delete[] buffer;
+			ProgramCounter();
+			break;
+		}
+		// printNum methods means print the number of characters in the file and store it in the buffer pointed to by buffer
+		case SC_PrintNum: {
+			int number = kernel->machine->ReadRegister(4);
+			kernel->PrintNum(number);
+			ProgramCounter();
+			break;
+		}
+		case SC_RandomNumber: {
+			kernel->RandomNumber();
+			ProgramCounter();
+			break;
+		}
+		// readString method means that read the string in the file and store it in the buffer pointed to by buffer
+		case SC_ReadString:	{
+			int addr = kernel->machine->ReadRegister(4);
+			char *buffer = User2System(addr, 200);
+			kernel->ReadString(buffer, 200);
+			delete[] buffer;
+			ProgramCounter();
+			break;
+		}
 		default:
 			cerr << "Unexpected system call " << type << "\n";
 			break;
@@ -213,91 +286,12 @@ void ExceptionHandler(ExceptionType which)
 		//	Add your implementation here
 		cerr << "Unexpected Exception.\n";
 		break;
-		
+
 	default:
 		cerr << "Unexpected user mode exception" << (int)which << "\n";
 		break;
 	}
-	ASSERTNOTREACHED();
 }
 
-// readnum means read the number of characters in the file and store it in the buffer pointed to by buffer
-int readNum()
-{
-	char ch;
-	int num = 0;
-	while (1)
-	{
-		ch = kernel->machine->ReadRegister(4);
-		if (ch == '\n')
-		{
-			break;
-		}
-		else if (ch == '\0')
-		{
-			break;
-		}
-		else
-		{
-			num = num * 10 + (ch - '0');
-			kernel->machine->WriteRegister(4, kernel->machine->ReadRegister(4) + 1);
-		}
-	}
-	return num;
-}
 
-// printNum methods means print the number of characters in the file and store it in the buffer pointed to by buffer
-void printNum(int number)
-{
-	int num = number;
-	int count = 0;
-	while (num > 0)
-	{
-		num = num / 10;
-		count++;
-	}
-	for (int i = 0; i < count; i++)
-	{
-		int digit = number % 10;
-		kernel->machine->WriteRegister(4, digit + '0');
-		number = number / 10;
-	}
-	kernel->machine->WriteRegister(4, '\n');
-}
 
-int RandomNum()
-{
-	// system call return a random number
-	return rand() % 100;
-}
-
-// readString method means that read the string in the file and store it in the buffer pointed to by buffer
-void ReadString(char buffer[], int length)
-{
-	int i = 0;
-	while (i < length)
-	{
-		buffer[i] = kernel->machine->ReadRegister(4);
-		if (buffer[i] == '\0')
-		{
-			break;
-		}
-		else
-		{
-			kernel->machine->WriteRegister(4, kernel->machine->ReadRegister(4) + 1);
-			i++;
-		}
-	}
-}
-
-// printString means that the string in the file and store it in the buffer pointed to by buffer
-void PrintString(char buffer[])
-{
-	int i = 0;
-	while (buffer[i] != '\0')
-	{
-		kernel->machine->WriteRegister(4, buffer[i]);
-		i++;
-	}
-	kernel->machine->WriteRegister(4, '\n');
-}

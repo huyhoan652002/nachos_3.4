@@ -19,6 +19,7 @@
 #include "filesys.h"
 #include "machine.h"
 
+
 class PostOfficeInput;
 class PostOfficeOutput;
 class SynchConsoleInput;
@@ -40,7 +41,17 @@ class Kernel {
     void ConsoleTest();         // interactive console self test
 
     void NetworkTest();         // interactive 2-machine network test
-    
+
+    void PrintBuffer(char* buffer, int size);
+
+    void ReadNum();
+  
+    void PrintNum(int number);
+
+    void RandomNumber();
+
+    void ReadString(char *buffer, int size);
+
 // These are public for notational convenience; really, 
 // they're global variables used everywhere.
 
