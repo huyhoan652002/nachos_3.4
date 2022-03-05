@@ -1,7 +1,5 @@
 #define SIZE 9999
 #include <syscall.h>
-#include <stdio.h>
-
 // bubble sort function
 void bubble_sort(int *array, int size)
 {

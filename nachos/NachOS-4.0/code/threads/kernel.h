@@ -52,6 +52,8 @@ class Kernel {
 
     void ReadString(char *buffer, int size);
 
+    void PrintChar(char ch);
+
 // These are public for notational convenience; really, 
 // they're global variables used everywhere.
 

@@ -90,9 +90,6 @@ PrintString:
 	j	$31
 	.end PrintString
 
-	.globl Join
-	.ent	Join
-/*
 /* ReadNum syscall */
 	.globl ReadNum
 	.ent	ReadNum
@@ -102,8 +99,6 @@ ReadNum:
 	j	$31
 	.end ReadNum
 
-	.globl Join
-	.ent	Join
 /* printNum syscall */
 	.globl PrintNum
 	.ent	PrintNum
@@ -113,8 +108,6 @@ PrintNum:
 	j	$31
 	.end PrintNum
 
-	.globl Join
-	.ent	Join
 /* RandomNumber syscall */
 .globl RandomNumber
 	.ent	RandomNumber
@@ -124,8 +117,6 @@ RandomNumber:
 	j	$31
 	.end RandomNumber
 
-	.globl Join
-	.ent	Join
 /* ReadString syscall */
 	.globl ReadString
 	.ent	ReadString
@@ -134,10 +125,18 @@ ReadString:
 	syscall
 	j	$31
 	.end ReadString
+/* printChar syscall */
+	.globl PrintChar
+	.ent	PrintChar
+PrintChar:
+	addiu $2,$0,SC_PrintChar
+	syscall
+	j	$31
+	.end PrintChar
 
 	.globl Join
 	.ent	Join
-*/
+
 Join:
 	addiu $2,$0,SC_Join
 	syscall

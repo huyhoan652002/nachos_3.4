@@ -39,9 +39,9 @@
 #define SC_PrintString 43
 #define SC_ReadNum         44
 #define SC_PrintNum             45
-#define SC_PrintString 46
 #define SC_RandomNumber 47
 #define SC_ReadString 48
+#define SC_PrintChar	49
 #ifndef IN_ASM
 
 /* The system call interface.  These are the operations the Nachos
@@ -193,6 +193,9 @@ void ReadString(char *buffer, int length);
 
 // printString means that the string in the file and store it in the buffer pointed to by buffer
 void PrintString(char *buffer, int size);
+
+// print charachter
+void PrintChar(char ch);
 
 #endif /* IN_ASM */
 

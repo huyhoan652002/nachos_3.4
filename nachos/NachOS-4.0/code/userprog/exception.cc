@@ -264,6 +264,12 @@ void ExceptionHandler(ExceptionType which)
 			ProgramCounter();
 			break;
 		}
+		case SC_PrintChar: {
+			int character = kernel->machine->ReadRegister(4);
+			kernel->PrintChar(character);
+			ProgramCounter();
+			break;
+		}
 		default:
 			cerr << "Unexpected system call " << type << "\n";
 			break;
@@ -289,7 +295,6 @@ void ExceptionHandler(ExceptionType which)
 
 	default:
 		cerr << "Unexpected user mode exception" << (int)which << "\n";
-		break;
 	}
 }
 

@@ -231,6 +231,11 @@ void Kernel::RandomNumber()
     PrintNum(num);
 }
 
+void Kernel::PrintChar(char ch)
+{
+    synchConsoleOut->PutChar(ch);
+}
+
 //----------------------------------------------------------------------
 // Kernel::NetworkTest
 //      Test whether the post office is working. On machines #0 and #1, do:
