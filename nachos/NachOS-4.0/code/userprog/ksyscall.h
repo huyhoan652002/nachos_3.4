@@ -27,6 +27,12 @@ int SysAdd(int op1, int op2)
   return op1 + op2;
 }
 
+void SysExit()
+{
+  kernel->currentThread->Finish();
+}
+
+
 
 
 

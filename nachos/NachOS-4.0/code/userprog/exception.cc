@@ -116,8 +116,7 @@ void ExceptionHandler(ExceptionType which)
 			DEBUG(dbgSys, "Exec system call.\n");
 		case SC_Exit:
 			DEBUG(dbgSys, "Exit system call.\n");
-			// SysExit();
-			ASSERTNOTREACHED();
+			
 			break;
 		case SC_Join:
 			DEBUG(dbgSys, "Join system call.\n");
