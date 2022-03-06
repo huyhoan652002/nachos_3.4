@@ -213,12 +213,11 @@ void ExceptionHandler(ExceptionType which)
 			kernel->currentThread->Finish();
 			ASSERTNOTREACHED();
 			break;
-			DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
+/* 			DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
 
 			SysHalt();
-
 			ASSERTNOTREACHED();
-			break;
+			break; */
 
 		case SC_Add:
 			DEBUG(dbgSys, "Add " << kernel->machine->ReadRegister(4) << " + " << kernel->machine->ReadRegister(5) << "\n");
