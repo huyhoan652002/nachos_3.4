@@ -18,30 +18,39 @@
 /* system call codes -- used by the stubs to tell the kernel which system call
  * is being asked for
  */
+
+// Terminate the current user program
 #define SC_Halt		0
+// Original syscalls
 #define SC_Exit		1
 #define SC_Exec		2
 #define SC_Join		3
+// File-related syscalls
 #define SC_Create	4
-#define SC_Remove       5
+#define SC_Remove   5
 #define SC_Open		6
 #define SC_Read		7
 #define SC_Write	8
 #define SC_Seek         9
 #define SC_Close	10
+// Multithreading syscalls
 #define SC_ThreadFork	11
 #define SC_ThreadYield	12
 #define SC_ExecV	13
 #define SC_ThreadExit   14
 #define SC_ThreadJoin   15
 
-#define SC_Add		42
-#define SC_PrintString 43
-#define SC_ReadNum         44
-#define SC_PrintNum             45
-#define SC_RandomNumber 47
-#define SC_ReadString 48
-#define SC_PrintChar	49
+// Defined by students
+#define SC_Add		    42
+
+#define SC_ReadNum      44
+#define SC_PrintNum     45
+#define SC_ReadChar     46
+#define SC_PrintChar    47
+
+#define SC_RandomNumber 48
+#define SC_ReadString   49
+#define SC_PrintString  50
 #ifndef IN_ASM
 
 /* The system call interface.  These are the operations the Nachos
@@ -194,7 +203,10 @@ void ReadString(char *buffer, int length);
 // printString means that the string in the file and store it in the buffer pointed to by buffer
 void PrintString(char *buffer, int size);
 
-// print charachter
+// read 1 char that the user entered
+char ReadChar();
+
+// print character
 void PrintChar(char ch);
 
 #endif /* IN_ASM */

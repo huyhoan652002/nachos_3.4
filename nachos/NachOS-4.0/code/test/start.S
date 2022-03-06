@@ -125,6 +125,16 @@ ReadString:
 	syscall
 	j	$31
 	.end ReadString
+
+/*	ReadChar syscall */
+	.globl ReadChar
+	.ent	ReadChar
+ReadChar:
+	addiu $2,$0,SC_ReadChar
+	syscall
+	j	$31
+	.end ReadChar
+	
 /* printChar syscall */
 	.globl PrintChar
 	.ent	PrintChar

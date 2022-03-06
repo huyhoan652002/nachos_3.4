@@ -38,10 +38,10 @@
 #           and edit Makefile.dep in this directory before you
 #           can build the test programs.
 #
-#    Nachos assumes that the location of the program startup routine (the		//////	Important note
-# 	location the kernel jumps to when the program initially starts up)		//////	Important note
-#       is at location 0.  This means: start.o must be the first .o passed 		//////	Important note
-# 	to ld, in order for the routine "Start" to be loaded at location 0		//////	Important note
+#    Nachos assumes that the location of the program startup routine (the		
+# 	location the kernel jumps to when the program initially starts up)		
+#       is at location 0.  This means: start.o must be the first .o passed 		
+# 	to ld, in order for the routine "Start" to be loaded at location 0		
 #
 #    When you make the test programs, you will see messages like these:
 #		numsections 3 
@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = add halt shell matmult sort segments createfile help ascii bubblesort
+PROGRAMS = add halt shell matmult sort segments createfile help ascii bubblesort checkChar
 endif
 
 all: $(PROGRAMS)
@@ -182,6 +182,12 @@ matmult.o: matmult.c
 matmult: matmult.o start.o
 	$(LD) $(LDFLAGS) start.o matmult.o -o matmult.coff
 	$(COFF2NOFF) matmult.coff matmult
+
+checkChar.o: checkChar.c
+	$(CC) $(CFLAGS) -c checkChar.c
+checkChar: checkChar.o start.o
+	$(LD) $(LDFLAGS) start.o checkChar.o -o checkChar.coff
+	$(COFF2NOFF) checkChar.coff checkChar
 
 clean:
 	$(RM) -f *.o *.ii

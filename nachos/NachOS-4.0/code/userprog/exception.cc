@@ -41,6 +41,10 @@
 //
 //	The result of the system call, if any, must be put back into r2.
 //
+//	/* Added by students: */
+// 	It seems that register r0 is the kernel stack pointer
+//	/* End of student code */
+//
 // If you are handling a system call, don't forget to increment the pc
 // before returning. (Or else you'll loop making the same system call forever!)
 //
@@ -48,16 +52,22 @@
 //	is in machine.h.
 //----------------------------------------------------------------------
 
+// Input: address of User(int), limit of buffer(int)
+// Output: a recoreded Buffer (char*)
+// Function: Copy memory from User to Kernel
 char *User2System(int virtAddr, int limit)
 {
 	int i; // index
 	int oneChar;
 	char *kernelBuf = NULL;
 	kernelBuf = new char[limit + 1]; // need for terminal string
+
 	if (kernelBuf == NULL)
 		return kernelBuf;
+
 	memset(kernelBuf, 0, limit + 1);
 	// printf("\n Filename u2s:");
+
 	for (i = 0; i < limit; i++)
 	{
 		kernel->machine->ReadMem(virtAddr + i, 1, &oneChar);
@@ -69,18 +79,34 @@ char *User2System(int virtAddr, int limit)
 	return kernelBuf;
 }
 
+// Input: address of User(int), limit of buffer(int), buffer(char*) that store the data
+// Output: So byte da sao chep(int)
+// Function: Copy memory from System memory to User memory (buffer to virtAddr)
+int System2User(int virtAddr, int len, char* buffer)
+{
+	if (len < 0) return -1;
+	if (len == 0)return len;
+	int i = 0;
+	int oneChar = 0;
+	do{
+		oneChar = (int)buffer[i];
+		kernel->machine->WriteMem(virtAddr + i, 1, oneChar);
+		i++;
+	} while (i < len && oneChar != 0);
+	return i;
+}
+
 void ProgramCounter()
 {
 	/* set previous programm counter (debugging only)*/
-				kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+	kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
 
-				/* set programm counter to next instruction (all Instructions are 4 byte wide)*/
-				kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
+	/* set programm counter to next instruction (all Instructions are 4 byte wide)*/
+	kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
 
-				/* set next programm counter for brach execution */
-				kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
+	/* set next programm counter for brach execution */
+	kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
 }
-
 
 void ExceptionHandler(ExceptionType which)
 {
@@ -116,7 +142,7 @@ void ExceptionHandler(ExceptionType which)
 			DEBUG(dbgSys, "Exec system call.\n");
 		case SC_Exit:
 			DEBUG(dbgSys, "Exit system call.\n");
-			
+
 			break;
 		case SC_Join:
 			DEBUG(dbgSys, "Join system call.\n");
@@ -223,49 +249,80 @@ void ExceptionHandler(ExceptionType which)
 			ASSERTNOTREACHED();
 
 			break;
+		// readnum means read the number of characters in the file and store it in the buffer pointed to by buffer
+		case SC_ReadNum:
+		{
+			int addr = kernel->machine->ReadRegister(4);
+			char *buffer = User2System(addr, 200);
+			kernel->ReadNum(2);
+			delete[] buffer;
+			ProgramCounter();
+			break;
+		}
+		// printNum methods means print the number of characters in the file and store it in the buffer pointed to by buffer
+		case SC_PrintNum:
+		{
+			int number = kernel->machine->ReadRegister(4);
+			kernel->PrintNum(number);
+			ProgramCounter();
+			break;
+		}
+		case SC_RandomNumber:
+		{
+			kernel->RandomNumber();
+			ProgramCounter();
+			break;
+		}
+		// readString method means that read the string in the file and store it in the buffer pointed to by buffer
+		case SC_ReadString:
+		{
+			// Input: buffer address (char*) to be read, length of the string
+			// Output: none
+			// Read the string that the user entered and store it in the buffer 
+			
+			int addr = kernel->machine->ReadRegister(4);
+			int length = kernel->machine->ReadRegister(5);			
+			char *buffer = User2System(addr, 200);
+
+			kernel->ReadString(addr, buffer, 200);
+
+			// System2User(addr, length, buffer); // Copy chuoi tu vung nho System Space sang vung nho User Space
+			
+			delete[] buffer;
+			ProgramCounter();
+			break;
+		}
 		// printString means that the string in the file and store it in the buffer pointed to by buffer
 		case SC_PrintString:
 		{
 			int addr = kernel->machine->ReadRegister(4);
 			char *buffer = User2System(addr, 200);
 			kernel->PrintBuffer(buffer, 200);
+			
+			cout << endl;
 			delete[] buffer;
 			ProgramCounter();
 			break;
 		}
-		// readnum means read the number of characters in the file and store it in the buffer pointed to by buffer
-		case SC_ReadNum: {
+		// Read a char that the user inputed
+		case SC_ReadChar:
+		{
 			int addr = kernel->machine->ReadRegister(4);
 			char *buffer = User2System(addr, 200);
-			kernel->ReadNum();
+
+			kernel->ReadChar(2);
+
 			delete[] buffer;
+
 			ProgramCounter();
 			break;
 		}
-		// printNum methods means print the number of characters in the file and store it in the buffer pointed to by buffer
-		case SC_PrintNum: {
-			int number = kernel->machine->ReadRegister(4);
-			kernel->PrintNum(number);
-			ProgramCounter();
-			break;
-		}
-		case SC_RandomNumber: {
-			kernel->RandomNumber();
-			ProgramCounter();
-			break;
-		}
-		// readString method means that read the string in the file and store it in the buffer pointed to by buffer
-		case SC_ReadString:	{
-			int addr = kernel->machine->ReadRegister(4);
-			char *buffer = User2System(addr, 200);
-			kernel->ReadString(buffer, 200);
-			delete[] buffer;
-			ProgramCounter();
-			break;
-		}
-		case SC_PrintChar: {
+
+		case SC_PrintChar:
+		{
 			int character = kernel->machine->ReadRegister(4);
 			kernel->PrintChar(character);
+			cout << "\n";
 			ProgramCounter();
 			break;
 		}
@@ -296,6 +353,3 @@ void ExceptionHandler(ExceptionType which)
 		cerr << "Unexpected user mode exception" << (int)which << "\n";
 	}
 }
-
-
-

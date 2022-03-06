@@ -44,14 +44,16 @@ class Kernel {
 
     void PrintBuffer(char* buffer, int size);
 
-    void ReadNum();
+    void ReadNum(int to_register);
   
     void PrintNum(int number);
 
     void RandomNumber();
 
-    void ReadString(char *buffer, int size);
+    void ReadString(int to_addr, char *buffer, int size);
 
+    void ReadChar(int to_register);
+    
     void PrintChar(char ch);
 
 // These are public for notational convenience; really, 
