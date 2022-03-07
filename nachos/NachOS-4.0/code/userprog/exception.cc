@@ -142,22 +142,16 @@ void ExceptionHandler(ExceptionType which)
 			DEBUG(dbgSys, "Exec system call.\n");
 		case SC_Exit:
 			DEBUG(dbgSys, "Exit system call.\n");
-
+			SysExit();
 			break;
 		case SC_Join:
 			DEBUG(dbgSys, "Join system call.\n");
-			// SysJoin();
+			//SysJoin(type);
 			ASSERTNOTREACHED();
 			break;
 		case SC_Create:
-
 			DEBUG(dbgSys, "Create system call.\n");
-			/*
-			SysCreate((char *)kernel->machine->ReadRegister(4), (int)kernel->machine->ReadRegister(5));
-			kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
-			kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
 			break;
-			*/
 		case SC_Remove:
 			DEBUG(dbgSys, "Remove system call.\n");
 			// SysRemove((char *)kernel->machine->ReadRegister(4));
@@ -213,12 +207,6 @@ void ExceptionHandler(ExceptionType which)
 			kernel->currentThread->Finish();
 			ASSERTNOTREACHED();
 			break;
-/* 			DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
-
-			SysHalt();
-			ASSERTNOTREACHED();
-			break; */
-
 		case SC_Add:
 			DEBUG(dbgSys, "Add " << kernel->machine->ReadRegister(4) << " + " << kernel->machine->ReadRegister(5) << "\n");
 

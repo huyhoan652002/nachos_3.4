@@ -209,6 +209,38 @@ char ReadChar();
 // print character
 void PrintChar(char ch);
 
+// sysJoin function
+void SysJoin(int id);
+
+//  SysRemove function
+void SysRemove(char *name);
+
+// SysOpen function
+int SysOpen(char *name);
+
+// SysRead Function
+int SysRead(char *buffer, int size, int id);
+
+// SysWrite function
+int SysWrite(char *buffer, int size, int id);
+
+// SysSeek following
+int SysSeek(int position, int id);
+
+// SysClose following
+int SysClose(int id);
+
+// SysThreadFork following
+ThreadId SysThreadFork(void (*func)());
+
+// ThreadYield following
+void SysThreadYield();
+
+// ThreadExit following
+void SysThreadExit(int ExitCode);
+
+
+
 #endif /* IN_ASM */
 
 #endif /* SYSCALL_H */
