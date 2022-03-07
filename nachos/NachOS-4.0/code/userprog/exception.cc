@@ -82,13 +82,16 @@ char *User2System(int virtAddr, int limit)
 // Input: address of User(int), limit of buffer(int), buffer(char*) that store the data
 // Output: So byte da sao chep(int)
 // Function: Copy memory from System memory to User memory (buffer to virtAddr)
-int System2User(int virtAddr, int len, char* buffer)
+int System2User(int virtAddr, int len, char *buffer)
 {
-	if (len < 0) return -1;
-	if (len == 0)return len;
+	if (len < 0)
+		return -1;
+	if (len == 0)
+		return len;
 	int i = 0;
 	int oneChar = 0;
-	do{
+	do
+	{
 		oneChar = (int)buffer[i];
 		kernel->machine->WriteMem(virtAddr + i, 1, oneChar);
 		i++;
@@ -96,6 +99,7 @@ int System2User(int virtAddr, int len, char* buffer)
 	return i;
 }
 
+// increase the pc
 void ProgramCounter()
 {
 	/* set previous programm counter (debugging only)*/
@@ -135,6 +139,7 @@ void ExceptionHandler(ExceptionType which)
 		{
 		case SC_Halt:
 			DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
+			cout << endl;
 			SysHalt();
 			ASSERTNOTREACHED(); // ASSERTNOTREACHED() means something is wrong, but we're not trying to fix it here so we can just ignore it and keep going (we'll crash later if we really want to fix it)
 			break;
@@ -146,7 +151,7 @@ void ExceptionHandler(ExceptionType which)
 			break;
 		case SC_Join:
 			DEBUG(dbgSys, "Join system call.\n");
-			//SysJoin(type);
+			// SysJoin(type);
 			ASSERTNOTREACHED();
 			break;
 		case SC_Create:
@@ -265,16 +270,16 @@ void ExceptionHandler(ExceptionType which)
 		{
 			// Input: buffer address (char*) to be read, length of the string
 			// Output: none
-			// Read the string that the user entered and store it in the buffer 
-			
+			// Read the string that the user entered and store it in the buffer
+
 			int addr = kernel->machine->ReadRegister(4);
-			int length = kernel->machine->ReadRegister(5);			
+			int length = kernel->machine->ReadRegister(5);
 			char *buffer = User2System(addr, 200);
 
 			kernel->ReadString(addr, buffer, 200);
 
 			// System2User(addr, length, buffer); // Copy chuoi tu vung nho System Space sang vung nho User Space
-			
+
 			delete[] buffer;
 			ProgramCounter();
 			break;
@@ -285,8 +290,8 @@ void ExceptionHandler(ExceptionType which)
 			int addr = kernel->machine->ReadRegister(4);
 			char *buffer = User2System(addr, 200);
 			kernel->PrintBuffer(buffer, 200);
-			
-			cout << endl;
+
+			// cout << endl;
 			delete[] buffer;
 			ProgramCounter();
 			break;
@@ -309,7 +314,7 @@ void ExceptionHandler(ExceptionType which)
 		{
 			int character = kernel->machine->ReadRegister(4);
 			kernel->PrintChar(character);
-			cout << "\n";
+			// cout << "\n";
 			ProgramCounter();
 			break;
 		}

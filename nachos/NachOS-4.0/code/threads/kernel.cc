@@ -230,7 +230,7 @@ void Kernel::PrintNum(int number)
     char buffer[10];
     sprintf(buffer, "%d", number);
     PrintBuffer(buffer, strlen(buffer));
-    cout << endl;
+    // cout << endl;
 }
 
 void Kernel::ReadString(int to_addr, char *buffer, int size)
@@ -251,6 +251,7 @@ void Kernel::ReadString(int to_addr, char *buffer, int size)
 void Kernel::RandomNumber()
 {
     int num = random() % 100;
+    machine->WriteRegister(2, num);
     PrintNum(num);
 }
 
