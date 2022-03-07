@@ -52,6 +52,8 @@
 //	is in machine.h.
 //----------------------------------------------------------------------
 
+#define MAX_FILENAME_LEN 33 // Max filename length: 32 + null terminator
+
 // Input: address of User(int), limit of buffer(int)
 // Output: a recoreded Buffer (char*)
 // Function: Copy memory from User to Kernel
@@ -121,30 +123,122 @@ void ExceptionHandler(ExceptionType which)
 	switch (which)
 	{
 	case NoException:
-		break;
+		return;
+
 	case PageFaultException:
-		printf("No valid translation found\n");
-		ASSERT(FALSE); // assert means something is wrong, but we're not trying to fix it here so we can just ignore it and keep going (we'll crash later if we really want to fix it)
+	{
+		DEBUG(dbgAddr, "No valid translation found\n");
+		printf("\nNo valid translation found\n");
+		kernel->interrupt->Halt();
+
+		// ASSERT(FALSE);
+		// assert means something is wrong, but we're not trying to fix it here so we can just ignore it and keep going (we'll crash later if we really want to fix it)
 		break;
+	}
+
 	case ReadOnlyException:
-		printf("Write attempted to page marked 'read-only'\n");
-		ASSERT(FALSE);
+	{
+		DEBUG(dbgAddr, "Write attempted to page marked read-only\n");
+		printf("\nWrite attempted to page marked 'read-only'\n");
+		kernel->interrupt->Halt();
+
 		break;
+	}
+
 	case BusErrorException:
+	{
+		DEBUG(dbgAddr, "Translation resulted in an invalid physical address\n");
 		printf("Translation resulted in an invalid physical address\n");
-		ASSERT(FALSE);
+		kernel->interrupt->Halt();
+
 		break;
+	}
+	case AddressErrorException:
+	{
+		DEBUG(dbgAddr, "Unaligned reference or one that was beyond the end of the address space\n");
+		printf("Unaligned reference or one that was beyond the end of the address space\n");
+		kernel->interrupt->Halt();
+
+		break;
+	}
+	case OverflowException:
+	{
+		DEBUG(dbgAddr, "Integer overflow in add or sub.\n");
+		printf("Integer overflow in add or sub.\n");
+		kernel->interrupt->Halt();
+
+		break;
+	}
+	case IllegalInstrException:
+	{
+		DEBUG(dbgAddr, "Unimplemented or reserved instr.\n");
+		printf("Unimplemented or reserved instr.\n");
+		kernel->interrupt->Halt();
+
+		// cerr << "Illegal Instruction.\n";
+		break;
+	}
+	case NumExceptionTypes:
+	{
+		DEBUG(dbgAddr, "NumExceptionTypes\n");
+		printf("NumExceptionTypes\n");
+		kernel->interrupt->Halt();
+
+		break;
+	}
+
 	case SyscallException:
 		switch (type)
 		{
 		case SC_Halt:
+			// Input: Khong co
+			// Output: Thong bao tat may
+			// Chuc nang: Tat HDH
 			DEBUG(dbgSys, "Shutdown, initiated by user program.\n");
 			cout << endl;
 			SysHalt();
-			ASSERTNOTREACHED(); // ASSERTNOTREACHED() means something is wrong, but we're not trying to fix it here so we can just ignore it and keep going (we'll crash later if we really want to fix it)
+			// ASSERTNOTREACHED();
+			// ASSERTNOTREACHED() means something is wrong, but we're not trying to fix it here so we can just ignore it and keep going (we'll crash later if we really want to fix it)
 			break;
 		case SC_Exec:
-			DEBUG(dbgSys, "Exec system call.\n");
+		{ 
+			// DEBUG(dbgSys, "Exec system call.\n");
+
+			// Input: vi tri int
+			// Output: Fail return -1, Success: return id cua thread dang chay
+			// SpaceId Exec(char *name);
+			int virtAddr = kernel->machine->ReadRegister(4);		  // doc dia chi ten chuong trinh tu thanh ghi r4
+			char *name = User2System(virtAddr, MAX_FILENAME_LEN + 1); // Lay ten chuong trinh, nap vao kernel
+
+			if (name == NULL)
+			{
+				DEBUG('a', "\n Not enough memory in System");
+				printf("\n Not enough memory in System");
+				kernel->machine->WriteRegister(2, -1);
+				// IncreasePC();
+				return;
+			}
+
+			// OpenFile *oFile = kernel->fileSystem->Open(name);
+			// if (oFile == NULL)
+			// {
+			// 	printf("\nExec:: Can't open this file.");
+			// 	kernel->machine->WriteRegister(2,-1);
+			// 	ProgramCounter();
+			// 	return;
+			// }
+
+			// delete oFile;
+
+			// // Return child process id
+			// int id = pTab->ExecUpdate(name);
+			// kernel->machine->WriteRegister(2,id);
+
+			delete[] name;
+			ProgramCounter();
+			return;
+			break;
+		}
 		case SC_Exit:
 			DEBUG(dbgSys, "Exit system call.\n");
 			SysExit();
@@ -155,8 +249,62 @@ void ExceptionHandler(ExceptionType which)
 			ASSERTNOTREACHED();
 			break;
 		case SC_Create:
-			DEBUG(dbgSys, "Create system call.\n");
-			break;
+			/* Create a Nachos file, with name "name" */
+			/* Note: Create does not open the file.   */
+			/* Return 1 on success, negative error code on failure */
+			{
+				// Input: address of User(int), limit of buffer(int)
+				// Output: -1 if error, 0 if success
+				// Function: Create a file with name "name" (the file name is the string pointed to by virtAddr)
+				DEBUG(dbgSys, "Create system call.\n");
+
+				DEBUG(dbgSys, "Reading virtual address of filename\n");
+				int addr = kernel->machine->ReadRegister(4);
+
+				DEBUG(dbgSys, "Reading filename\n");
+				char *filename = User2System(addr, MAX_FILENAME_LEN);
+
+				if (strlen(filename) == 0)
+				{
+					printf("\nFilename is empty\n");
+					DEBUG(dbgAddr, "Filename is not valid\n");
+					kernel->machine->WriteRegister(2, -1); // return -1 to user program
+
+					break;
+				}
+
+				if (filename == NULL) // if can't read filename
+				{
+					printf("\nNot enough memory in system\n");
+					DEBUG(dbgAddr, "Not enough memory in system\n");
+					kernel->machine->WriteRegister(2, -1); // return -1 to user program
+
+					delete filename;
+					break;
+				}
+
+				DEBUG(dbgAddr, "Filename is valid\n");
+
+				// bool success = kernel->CreateFile(filename, 0);
+				// if (!success)
+				// {
+				// 	// Fail to create file
+				// 	printf("\nCan't create file '%s'\n", filename);
+				// 	DEBUG(dbgAddr, "Can't create file\n");
+				// 	kernel->machine->WriteRegister(2, -1); // return -1 to user program
+
+				// 	delete filename;
+				// 	break;
+				// }
+
+				// Success to create file
+				kernel->machine->WriteRegister(2, 0); // return 0 to user program
+				printf("\nSuccess to create file '%s'\n", filename);
+				delete filename;
+
+				break;
+			}
+
 		case SC_Remove:
 			DEBUG(dbgSys, "Remove system call.\n");
 			// SysRemove((char *)kernel->machine->ReadRegister(4));
@@ -213,6 +361,7 @@ void ExceptionHandler(ExceptionType which)
 			ASSERTNOTREACHED();
 			break;
 		case SC_Add:
+		{
 			DEBUG(dbgSys, "Add " << kernel->machine->ReadRegister(4) << " + " << kernel->machine->ReadRegister(5) << "\n");
 
 			/* Process SysAdd Systemcall*/
@@ -225,22 +374,13 @@ void ExceptionHandler(ExceptionType which)
 			kernel->machine->WriteRegister(2, (int)result);
 
 			/* Modify return point */
-			{
-				/* set previous programm counter (debugging only)*/
-				kernel->machine->WriteRegister(PrevPCReg, kernel->machine->ReadRegister(PCReg));
+			ProgramCounter();
 
-				/* set programm counter to next instruction (all Instructions are 4 byte wide)*/
-				kernel->machine->WriteRegister(PCReg, kernel->machine->ReadRegister(PCReg) + 4);
-
-				/* set next programm counter for brach execution */
-				kernel->machine->WriteRegister(NextPCReg, kernel->machine->ReadRegister(PCReg) + 4);
-			}
-
-			return;
-
-			ASSERTNOTREACHED();
+			// return;
+			// ASSERTNOTREACHED();
 
 			break;
+		}
 		// readnum means read the number of characters in the file and store it in the buffer pointed to by buffer
 		case SC_ReadNum:
 		{
@@ -322,23 +462,6 @@ void ExceptionHandler(ExceptionType which)
 			cerr << "Unexpected system call " << type << "\n";
 			break;
 		}
-		break;
-
-	case AddressErrorException:
-		//	Add your implementation here
-		break;
-	case OverflowException:
-		//	Add your implementation here
-		break;
-
-	case IllegalInstrException:
-		//	Add your implementation here
-		cerr << "Illegal Instruction.\n";
-		break;
-
-	case NumExceptionTypes:
-		//	Add your implementation here
-		cerr << "Unexpected Exception.\n";
 		break;
 
 	default:

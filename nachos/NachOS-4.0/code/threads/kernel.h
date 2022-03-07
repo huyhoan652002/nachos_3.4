@@ -42,6 +42,8 @@ class Kernel {
 
     void NetworkTest();         // interactive 2-machine network test
 
+    // bool CreateFile(char *filename, int size);
+
     void PrintBuffer(char* buffer, int size);
 
     void ReadNum(int to_register);
