@@ -230,6 +230,10 @@ void Kernel::ReadNum(int to_register)
             {
                 is_int = true;
             }
+            else if(buffer[size] == '\n')
+            {
+                is_int = true;
+            }
             else // if it's not an int
             {
                 is_int = false;
