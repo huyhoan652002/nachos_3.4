@@ -6,12 +6,13 @@ int main()
     // c = ReadChar();
     // PrintChar(c);
 
-    // int n;
-    // n = ReadNum();
-    // PrintNum(n);
+    int n;
+    n = ReadNum();
+    PrintNum(n);
 
-    char s[100];
-    ReadString(s, 100);
-    PrintString(s, 100);
+    // char s[100];
+    // ReadString(s, 100);
+    // PrintString(s, 100);
+    
     Halt();
 }

@@ -217,17 +217,39 @@ void Kernel::ReadNum(int to_register)
     char buffer[10];
     int size = 0;
     int num = 0;
+    bool is_int = true;
     do
     {
         buffer[size] = synchConsoleIn->GetChar();
+
+        // If the digit is not an int
+        if (buffer[size] < 48 || buffer[size] > 57)
+        {
+            // If it's a negative sign
+            if (size == 0 && buffer[size] == '-')
+            {
+                is_int = true;
+            }
+            else // if it's not an int
+            {
+                is_int = false;
+                machine->WriteRegister(to_register, 0); // Return 0 if it's not an int
+                break;
+            }
+        }
+
         size++;
     } while (buffer[size - 1] != '\n');
-    buffer[size - 1] = '\0';
 
-    num = atoi(buffer);
+    if (is_int)
+    {
+        buffer[size - 1] = '\0';
 
-    machine->WriteRegister(to_register, num);
-    // cout << "num = " << num << endl;
+        num = atoi(buffer);
+
+        machine->WriteRegister(to_register, num);
+        // cout << "num = " << num << endl;
+    }
 }
 
 void Kernel::PrintNum(int number)
@@ -240,7 +262,8 @@ void Kernel::PrintNum(int number)
 
 void Kernel::ReadString(int to_addr, char *buffer, int size)
 {
-    if (size < 0 || size == 0) return;
+    if (size < 0 || size == 0)
+        return;
 
     int i = 0;
     do
