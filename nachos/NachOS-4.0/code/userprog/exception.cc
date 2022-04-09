@@ -315,21 +315,20 @@ void ExceptionHandler(ExceptionType which)
 			// SysOpen((char *)kernel->machine->ReadRegister(4));
 			ASSERTNOTREACHED();
 			break;
+		// hoan
 		case SC_Read:
 			DEBUG(dbgSys, "Read system call.\n");
-			// SysRead((char *)kernel->machine->ReadRegister(4), (char *)kernel->machine->ReadRegister(5), (int)kernel->machine->ReadRegister(6));
 			ASSERTNOTREACHED();
 			break;
 		case SC_Write:
 			DEBUG(dbgSys, "Write system call.\n");
-			// SysWrite((char *)kernel->machine->ReadRegister(4), (char *)kernel->machine->ReadRegister(5), (int)kernel->machine->ReadRegister(6));
 			ASSERTNOTREACHED();
 			break;
 		case SC_Seek:
 			DEBUG(dbgSys, "Seek system call.\n");
-			// SysSeek((int)kernel->machine->ReadRegister(4), (int)kernel->machine->ReadRegister(5));
 			ASSERTNOTREACHED();
 			break;
+		// end of hoan
 		case SC_Close:
 			DEBUG(dbgSys, "Close system call.\n");
 			// SysClose((int)kernel->machine->ReadRegister(4));

@@ -301,6 +301,21 @@ void Kernel::PrintChar(char ch)
     synchConsoleOut->PutChar(ch);
 }
 
+// read
+int Kernel::Read(char *buffer, int size, OpenFileID id)
+{
+    return synchDisk->ReadSector(buffer, size, id);
+}
+
+int Kernel::Write(char *buffer, int size, OpenFileID id)
+{
+    return synchDisk->WriteSector(buffer, size, id);
+}
+
+int Kernel::Seek(int position, OpenFileID id)
+{
+    return synchDisk->Seek(position, id);
+}
 //----------------------------------------------------------------------
 // Kernel::NetworkTest
 //      Test whether the post office is working. On machines #0 and #1, do:

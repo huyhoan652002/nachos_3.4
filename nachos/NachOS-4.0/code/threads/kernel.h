@@ -58,6 +58,15 @@ class Kernel {
     
     void PrintChar(char ch);
 
+    // read
+    int Read(char *buffer, int size, OpenFileID id);
+
+    // write
+    int Write(char *buffer, int size, OpenFileID id);
+
+    // seek
+    int Seek(int position, OpenFileID id);
+
 // These are public for notational convenience; really, 
 // they're global variables used everywhere.
 

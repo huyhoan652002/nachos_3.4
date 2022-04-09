@@ -144,6 +144,33 @@ PrintChar:
 	j	$31
 	.end PrintChar
 
+/* read syscall */
+	.globl read
+	.ent	read
+read:
+	addiu $2,$0,SC_read
+	syscall
+	j	$31
+	.end read
+
+/* Write syscall */
+	.globl write
+	.ent	write
+write:
+	addiu $2,$0,SC_write
+	syscall
+	j	$31
+	.end write
+
+/* seek syscall */
+	.globl seek
+	.ent	seek
+seek:
+	addiu $2,$0,SC_seek
+	syscall
+	j	$31
+	.end seek
+
 	.globl Join
 	.ent	Join
 
