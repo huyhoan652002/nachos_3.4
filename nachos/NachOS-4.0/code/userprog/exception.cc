@@ -285,24 +285,25 @@ void ExceptionHandler(ExceptionType which)
 
 				DEBUG(dbgAddr, "Filename is valid\n");
 
-				// bool success = kernel->CreateFile(filename, 0);
-				// if (!success)
-				// {
-				// 	// Fail to create file
-				// 	printf("\nCan't create file '%s'\n", filename);
-				// 	DEBUG(dbgAddr, "Can't create file\n");
-				// 	kernel->machine->WriteRegister(2, -1); // return -1 to user program
+				bool success = kernel->fileSystem->Create(filename, 0);
+				if (!success)
+				{
+					// Fail to create file
+					printf("\nCan't create file '%s'\n", filename);
+					DEBUG(dbgAddr, "Can't create file\n");
+					kernel->machine->WriteRegister(2, -1); // return -1 to user program
 
-				// 	delete filename;
-				// 	break;
-				// }
-
-				// Success to create file
-				kernel->machine->WriteRegister(2, 0); // return 0 to user program
-				printf("\nSuccess to create file '%s'\n", filename);
-				delete filename;
-
-				break;
+					delete filename;
+					break;
+				}
+				else{
+					// Success to create file
+					kernel->machine->WriteRegister(2, 0); // return 0 to user program
+					printf("\nSuccess to create file '%s'\n", filename);
+					
+					delete filename;
+					break;
+				}	
 			}
 
 		case SC_Remove:

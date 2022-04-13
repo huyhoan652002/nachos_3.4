@@ -81,6 +81,7 @@ ExecV:
 	syscall
 	j	$31
 	.end ExecV
+
 /* printString */
 	.globl PrintString
 	.ent	PrintString
@@ -148,7 +149,7 @@ PrintChar:
 	.globl read
 	.ent	read
 read:
-	addiu $2,$0,SC_read
+	addiu $2,$0,SC_Read
 	syscall
 	j	$31
 	.end read
@@ -157,7 +158,7 @@ read:
 	.globl write
 	.ent	write
 write:
-	addiu $2,$0,SC_write
+	addiu $2,$0,SC_Write
 	syscall
 	j	$31
 	.end write
@@ -166,14 +167,13 @@ write:
 	.globl seek
 	.ent	seek
 seek:
-	addiu $2,$0,SC_seek
+	addiu $2,$0,SC_Seek
 	syscall
 	j	$31
 	.end seek
 
 	.globl Join
 	.ent	Join
-
 Join:
 	addiu $2,$0,SC_Join
 	syscall

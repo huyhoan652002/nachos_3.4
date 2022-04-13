@@ -2,9 +2,14 @@
 
 int main()
 {
-    // int fd;
-    // fd = Create("testCreateFile.txt");
-    // PrintString("\n '%s'\n", fd);
-    Create("testCreateFile.txt");
-    Halt();
+    int fd = 1;
+    
+    PrintString("\n",3);
+    PrintNum(fd);
+    PrintString("\n",3);
+    
+    fd = Create("overGeared.txt");
+    
+    // Create("testCreateFile.txt");
+    // Halt();
 }

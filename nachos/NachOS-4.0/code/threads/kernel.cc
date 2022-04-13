@@ -207,11 +207,6 @@ void Kernel::PrintBuffer(char *buffer, int size)
     }
 }
 
-// bool Kernel::CreateFile(char *filename, int initialSize)
-// {
-//     return fileSystem->Create(filename, initialSize);
-// }
-
 void Kernel::ReadNum(int to_register)
 {
     char buffer[10];
