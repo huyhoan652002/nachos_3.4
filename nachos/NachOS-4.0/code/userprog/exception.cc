@@ -201,7 +201,7 @@ void ExceptionHandler(ExceptionType which)
 			// ASSERTNOTREACHED() means something is wrong, but we're not trying to fix it here so we can just ignore it and keep going (we'll crash later if we really want to fix it)
 			break;
 		case SC_Exec:
-		{ 
+		{
 			// DEBUG(dbgSys, "Exec system call.\n");
 
 			// Input: vi tri int
@@ -296,14 +296,15 @@ void ExceptionHandler(ExceptionType which)
 					delete filename;
 					break;
 				}
-				else{
+				else
+				{
 					// Success to create file
 					kernel->machine->WriteRegister(2, 0); // return 0 to user program
 					printf("\nSuccess to create file '%s'\n", filename);
-					
+
 					delete filename;
 					break;
-				}	
+				}
 			}
 
 		case SC_Remove:
@@ -312,29 +313,88 @@ void ExceptionHandler(ExceptionType which)
 			ASSERTNOTREACHED();
 			break;
 		case SC_Open:
+		{
 			DEBUG(dbgSys, "Open system call.\n");
-			// SysOpen((char *)kernel->machine->ReadRegister(4));
-			ASSERTNOTREACHED();
+			int addr = kernel->machine->ReadRegister(4);
+			char *name = User2System(addr, MAX_FILENAME_LEN);
+			int fileId = kernel->Open(name);
+			if (fileId == -1)
+			{
+				kernel->machine->WriteRegister(2, -1);
+			}
+			else
+			{
+				kernel->machine->WriteRegister(2, fileId);
+			}
+			delete[] name;
+
+			ProgramCounter();
 			break;
+		}
 		// hoan
 		case SC_Read:
+		{
 			DEBUG(dbgSys, "Read system call.\n");
-			ASSERTNOTREACHED();
+			int virAddr = kernel->machine->ReadRegister(4);
+			int size = kernel->machine->ReadRegister(5);
+			char *buffer = User2System(virAddr, size);
+			int fileId = kernel->machine->ReadRegister(6);
+			int numBytes = kernel->Read(buffer, size, fileId);
+			if (numBytes < 0)
+			{
+				cout << "0 bytes read" << endl;
+			}
+			else
+			{
+				cout << numBytes << " bytes read" << endl;
+			}
+			System2User(virAddr, numBytes, buffer);
+			kernel->machine->WriteRegister(2, numBytes);
+			delete[] buffer;
+			ProgramCounter();
 			break;
+		}
 		case SC_Write:
 			DEBUG(dbgSys, "Write system call.\n");
 			ASSERTNOTREACHED();
 			break;
 		case SC_Seek:
+		{
+			// int Seek(int position, OpenFileId id);
+
 			DEBUG(dbgSys, "Seek system call.\n");
-			ASSERTNOTREACHED();
+			int position = kernel->machine->ReadRegister(4);
+			int fileId = kernel->machine->ReadRegister(5);
+			int numbytes = kernel->Seek(position, fileId);
+			kernel->machine->WriteRegister(2, numbytes);
+			ProgramCounter();
 			break;
+		}
 		// end of hoan
 		case SC_Close:
+		{
 			DEBUG(dbgSys, "Close system call.\n");
 			// SysClose((int)kernel->machine->ReadRegister(4));
-			ASSERTNOTREACHED();
+			int result = kernel->Close((int)kernel->machine->ReadRegister(4));
+			if (result == 0)
+			{
+				kernel->machine->WriteRegister(2, 0);
+			}
+			else
+			{
+				kernel->machine->WriteRegister(2, -1);
+			}
+
+			// for (int i = 0; i < 50; i++)
+			// {
+			// 	if (kernel->fileSystem->tableOfFiles[i] != NULL)
+			// 	{
+			// 		cout << "OpenFileID: " << i << "\tName: " << kernel->fileSystem->tableOfFiles[i]->fileName << endl;
+			// 	}
+			// }
+			ProgramCounter();
 			break;
+		}
 		case SC_ThreadFork:
 			DEBUG(dbgSys, "ThreadFork system call.\n");
 			// SysThreadFork((char *)kernel->machine->ReadRegister(4));
