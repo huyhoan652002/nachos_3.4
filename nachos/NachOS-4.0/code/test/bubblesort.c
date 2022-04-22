@@ -4,26 +4,26 @@
 int main() {
     int n, a[SIZE + 1], order, temp, i, j;
     do {
-        PrintString("Enter n (0 <= n <= 100): ", 100);
+        PrintString("Enter n (0 <= n <= 100): ");
         n = ReadNum();
         if (n < 0 || n > 100)
             PrintString(
                 "n has to be an integer between 1 and 100 (inclusive), please "
-                "try again\n", 100);
+                "try again\n");
     } while (n < 0 || n > 100);
 
     for (i = 0; i < n; i++) {
-        PrintString("Enter a[", 100);
+        PrintString("Enter a[");
         PrintNum(i);
-        PrintString("]: ", 100);
+        PrintString("]: ");
         a[i] = ReadNum();
     }
 
     do {
-        PrintString("Enter sort order (1: increasing, 2: decreasing): ", 100);
+        PrintString("Enter sort order (1: increasing, 2: decreasing): ");
         order = ReadNum();
         if (order != 1 && order != 2)
-            PrintString("Wrong input, please try again\n", 100);
+            PrintString("Wrong input, please try again\n");
     } while (order != 1 && order != 2);
 
     for (i = 0; i < n; i++) {
@@ -44,7 +44,7 @@ int main() {
         }
     }
 
-    PrintString("Sorted array: ", 100);
+    PrintString("Sorted array: ");
     for (i = 0; i < n; i++) {
         PrintNum(a[i]);
         PrintChar(' ');

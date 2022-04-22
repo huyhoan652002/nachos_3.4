@@ -4,9 +4,9 @@ int main()
 {
     int fd = 1;
     
-    PrintString("\n",3);
+    PrintString("\n");
     PrintNum(fd);
-    PrintString("\n",3);
+    PrintString("\n");
     
     fd = Create("overGeared.txt");
     

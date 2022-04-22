@@ -20,6 +20,10 @@
 #include "machine.h"
 
 
+/* A unique identifier for an open Nachos file. */
+typedef int OpenFileID;	
+
+
 class PostOfficeInput;
 class PostOfficeOutput;
 class SynchConsoleInput;

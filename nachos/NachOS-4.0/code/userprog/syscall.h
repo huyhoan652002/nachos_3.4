@@ -201,7 +201,7 @@ int RandomNum();
 void ReadString(char *buffer, int length);
 
 // printString means that the string in the file and store it in the buffer pointed to by buffer
-void PrintString(char *buffer, int size);
+void PrintString(char *buffer);
 
 // read 1 char that the user entered
 char ReadChar();
