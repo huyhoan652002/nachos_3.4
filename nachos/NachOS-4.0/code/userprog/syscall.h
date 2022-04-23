@@ -15,6 +15,7 @@
 
 #include "copyright.h"
 #include "errno.h"
+
 /* system call codes -- used by the stubs to tell the kernel which system call
  * is being asked for
  */
@@ -128,6 +129,7 @@ typedef int OpenFileId;
 int Create(char *name);
 
 /* Remove a Nachos file, with name "name" */
+/* Return 1 on success, negative error code on failure */
 int Remove(char *name);
 
 /* Open the Nachos file "name", and return an "OpenFileId" that can 
