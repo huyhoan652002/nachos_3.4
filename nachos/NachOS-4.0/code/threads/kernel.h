@@ -2,7 +2,7 @@
 //	Global variables for the Nachos kernel.
 //
 // Copyright (c) 1992-1996 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
+// All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
 #ifndef KERNEL_H
@@ -19,10 +19,8 @@
 #include "filesys.h"
 #include "machine.h"
 
-
 /* A unique identifier for an open Nachos file. */
-typedef int OpenFileID;	
-
+typedef int OpenFileID;
 
 class PostOfficeInput;
 class PostOfficeOutput;
@@ -30,147 +28,190 @@ class SynchConsoleInput;
 class SynchConsoleOutput;
 class SynchDisk;
 
-class Kernel {
-  public:
-    Kernel(int argc, char **argv);
-    				// Interpret command line arguments
-    ~Kernel();		        // deallocate the kernel
-    
-    void Initialize(); 		// initialize the kernel -- separated
-				// from constructor because 
-				// refers to "kernel" as a global
+class Kernel
+{
+public:
+  Kernel(int argc, char **argv);
+  // Interpret command line arguments
+  ~Kernel(); // deallocate the kernel
 
-    void ThreadSelfTest();	// self test of threads and synchronization
+  void Initialize(); // initialize the kernel -- separated
+                     // from constructor because
+                     // refers to "kernel" as a global
 
-    void ConsoleTest();         // interactive console self test
+  void ThreadSelfTest(); // self test of threads and synchronization
 
-    void NetworkTest();         // interactive 2-machine network test
+  void ConsoleTest(); // interactive console self test
 
-    // bool CreateFile(char *filename, int size);
+  void NetworkTest(); // interactive 2-machine network test
 
-    void PrintBuffer(char* buffer, int size);
+  // bool CreateFile(char *filename, int size);
 
-    void ReadNum(int to_register);
-  
-    void PrintNum(int number);
+  void PrintBuffer(char *buffer, int size);
 
-    void RandomNumber();
+  void ReadNum(int to_register);
 
-    void ReadString(int to_addr, char *buffer, int size);
+  void PrintNum(int number);
 
-    void ReadChar(int to_register);
-    
-    void PrintChar(char ch);
+  void RandomNumber();
 
-    // open
-    int Open(char *name) {
-      if (name == NULL) {
-        return -1;
-      }
+  void ReadString(int to_addr, char *buffer, int size);
 
-      for (int i = 0; i < 50; ++i) {
-        if (fileSystem->tableOfFiles[i] != NULL && strcmp(fileSystem->tableOfFiles[i]->fileName, name) == 0) {
-          return i;
-        }
-       
-      }
+  void ReadChar(int to_register);
 
-      int emptySlot = -1;
-      for (int i = 2; i < 50; ++i) {
-        if (fileSystem->tableOfFiles[i] == NULL) {
-          emptySlot = i;
-          break;
-        }
-      }
-      if (emptySlot == -1) {
-        return -1;
-      }
-      fileSystem->tableOfFiles[emptySlot] = fileSystem->Open(name);
-      if (fileSystem->tableOfFiles[emptySlot] == NULL) {
-        return -1;
-      }
-      fileSystem->tableOfFiles[emptySlot]->fileName = new char[strlen(name) + 1];
-      strcpy(fileSystem->tableOfFiles[emptySlot]->fileName, name);
-      return emptySlot;
-    }
+  void PrintChar(char ch);
 
-
-    int Close(int fileId) {
-      if (fileId < 0 || fileId >= 50) {
-        return -1;
-      }
-      if (fileSystem->tableOfFiles[fileId] == NULL) {
-        return -1;
-      }
-
-      delete fileSystem->tableOfFiles[fileId];
-      fileSystem->tableOfFiles[fileId] = NULL;
-      return 0;
-    }
-    // read
-    int Read(char *buffer, int size, int id)
+  // remove
+  int Remove(char* fileName)
+  {
+    if(fileName == NULL)
     {
-      if (id < 0 || id >= 50) {
-        return -1;
-      }
-      if (fileSystem->tableOfFiles[id] == NULL) {
-        return -1;
-      }
-      int result = fileSystem->tableOfFiles[id]->Read(buffer, size);
-      return result;
+      return -1;
+    }
+    if(strlen(fileName) == 0)
+    {
+      return -1;
+    }
+    return fileSystem->Remove(fileName);
+  }
+
+  // open
+  int Open(char *name)
+  {
+    if (name == NULL)
+    {
+      return -1;
     }
 
-    // write
-    // int Write(char *buffer, int size, OpenFileID id);
-
-    // seek
-    int Seek(int position, int id){
-      if (id < 0 || id >= 50) {
-        return -1;
-      }
-      if (fileSystem->tableOfFiles[id] == NULL) {
-        return -1;
-      }
-      if (position == -1) position = fileSystem->tableOfFiles[id]->Length();
-      if (position < 0) position = 0;
-      int numbytes = fileSystem->tableOfFiles[id]->Seek(position);
-      if (numbytes >= 0) {
-        return numbytes;
-      } else {
-        return -1;
+    for (int i = 0; i < 50; ++i)
+    {
+      if (fileSystem->tableOfFiles[i] != NULL && strcmp(fileSystem->tableOfFiles[i]->fileName, name) == 0)
+      {
+        return i;
       }
     }
 
-// These are public for notational convenience; really, 
-// they're global variables used everywhere.
+    int emptySlot = -1;
+    for (int i = 2; i < 50; ++i)
+    {
+      if (fileSystem->tableOfFiles[i] == NULL)
+      {
+        emptySlot = i;
+        break;
+      }
+    }
+    if (emptySlot == -1)
+    {
+      return -1;
+    }
+    fileSystem->tableOfFiles[emptySlot] = fileSystem->Open(name);
+    if (fileSystem->tableOfFiles[emptySlot] == NULL)
+    {
+      return -1;
+    }
+    fileSystem->tableOfFiles[emptySlot]->fileName = new char[strlen(name) + 1];
+    strcpy(fileSystem->tableOfFiles[emptySlot]->fileName, name);
+    return emptySlot;
+  }
 
-    Thread *currentThread;	// the thread holding the CPU
-    Scheduler *scheduler;	// the ready list
-    Interrupt *interrupt;	// interrupt status
-    Statistics *stats;		// performance metrics
-    Alarm *alarm;		// the software alarm clock    
-    Machine *machine;           // the simulated CPU
-    SynchConsoleInput *synchConsoleIn;
-    SynchConsoleOutput *synchConsoleOut;
-    SynchDisk *synchDisk;
-    FileSystem *fileSystem;     
-    PostOfficeInput *postOfficeIn;
-    PostOfficeOutput *postOfficeOut;
+  int Close(int fileId)
+  {
+    if (fileId < 0 || fileId >= 50)
+    {
+      return -1;
+    }
+    if (fileSystem->tableOfFiles[fileId] == NULL)
+    {
+      return -1;
+    }
 
-    int hostName;               // machine identifier
+    delete fileSystem->tableOfFiles[fileId];
+    fileSystem->tableOfFiles[fileId] = NULL;
+    return 0;
+  }
+  // read
+  int Read(char *buffer, int size, int id)
+  {
+    if (id < 0 || id >= 50)
+    {
+      return -1;
+    }
+    if (fileSystem->tableOfFiles[id] == NULL)
+    {
+      return -1;
+    }
+    int result = fileSystem->tableOfFiles[id]->Read(buffer, size);
+    return result;
+  }
 
-  private:
-    bool randomSlice;		// enable pseudo-random time slicing
-    bool debugUserProg;         // single step user program
-    double reliability;         // likelihood messages are dropped
-    char *consoleIn;            // file to read console input from
-    char *consoleOut;           // file to send console output to
+  // write
+  int Write(char *buffer, int size, int id)
+  {
+    if (id < 0 || id >= 50)
+    {
+      return -1;
+    }
+    if (fileSystem->tableOfFiles[id] == NULL)
+    {
+      return -1;
+    }
+    int result = fileSystem->tableOfFiles[id]->Write(buffer, size);
+    return result;
+  }
+
+  // seek
+  int Seek(int position, int id)
+  {
+    if (id < 0 || id >= 50)
+    {
+      return -1;
+    }
+    if (fileSystem->tableOfFiles[id] == NULL)
+    {
+      return -1;
+    }
+    if (position == -1)
+      position = fileSystem->tableOfFiles[id]->Length();
+    if (position < 0)
+      position = 0;
+    int numbytes = fileSystem->tableOfFiles[id]->Seek(position);
+    if (numbytes >= 0)
+    {
+      return numbytes;
+    }
+    else
+    {
+      return -1;
+    }
+  }
+
+  // These are public for notational convenience; really,
+  // they're global variables used everywhere.
+
+  Thread *currentThread; // the thread holding the CPU
+  Scheduler *scheduler;  // the ready list
+  Interrupt *interrupt;  // interrupt status
+  Statistics *stats;     // performance metrics
+  Alarm *alarm;          // the software alarm clock
+  Machine *machine;      // the simulated CPU
+  SynchConsoleInput *synchConsoleIn;
+  SynchConsoleOutput *synchConsoleOut;
+  SynchDisk *synchDisk;
+  FileSystem *fileSystem;
+  PostOfficeInput *postOfficeIn;
+  PostOfficeOutput *postOfficeOut;
+
+  int hostName; // machine identifier
+
+private:
+  bool randomSlice;   // enable pseudo-random time slicing
+  bool debugUserProg; // single step user program
+  double reliability; // likelihood messages are dropped
+  char *consoleIn;    // file to read console input from
+  char *consoleOut;   // file to send console output to
 #ifndef FILESYS_STUB
-    bool formatFlag;          // format the disk if this is true
+  bool formatFlag; // format the disk if this is true
 #endif
 };
 
-
 #endif // KERNEL_H
-
-

@@ -308,10 +308,40 @@ void ExceptionHandler(ExceptionType which)
 			}
 
 		case SC_Remove:
+		{
 			DEBUG(dbgSys, "Remove system call.\n");
-			// SysRemove((char *)kernel->machine->ReadRegister(4));
-			ASSERTNOTREACHED();
+			int virArr = kernel->machine->ReadRegister(4);
+			char* filename = User2System(virArr, MAX_FILENAME_LEN + 1);
+			if (filename == NULL)
+			{
+				printf("\nNot enough memory in system\n");
+				DEBUG(dbgAddr, "Not enough memory in system\n");
+				kernel->machine->WriteRegister(2, -1); // return -1 to user program
+				break;
+			}
+			bool success = kernel->fileSystem->Remove(filename);
+			if (!success)
+			{
+				// Fail to remove file
+				printf("\nCan't remove file '%s'\n", filename);
+				DEBUG(dbgAddr, "Can't remove file\n");
+				kernel->machine->WriteRegister(2, -1); // return -1 to user program
+
+				delete filename;
+				break;
+			}
+			else
+			{
+				// Success to remove file
+				kernel->machine->WriteRegister(2, 0); // return 0 to user program
+				printf("\nSuccess to remove file '%s'\n", filename);
+
+				delete filename;
+				break;
+			}
 			break;
+		}
+		
 		case SC_Open:
 		{
 			DEBUG(dbgSys, "Open system call.\n");
@@ -355,9 +385,27 @@ void ExceptionHandler(ExceptionType which)
 			break;
 		}
 		case SC_Write:
+		{
 			DEBUG(dbgSys, "Write system call.\n");
-			ASSERTNOTREACHED();
+			int VirAddr = kernel->machine->ReadRegister(4);
+			int size = kernel->machine->ReadRegister(5);
+			char *buffer = User2System(VirAddr, size);
+			int fileId = kernel->machine->ReadRegister(6);
+			int numBytes = kernel->Write(buffer, size, fileId);
+			if (numBytes < 0)
+			{
+				cout << "0 bytes written" << endl;
+			}
+			else
+			{
+				cout << numBytes << " bytes written" << endl;
+			}
+			System2User(VirAddr, numBytes, buffer);
+			kernel->machine->WriteRegister(2, numBytes);
+			delete[] buffer;
+			ProgramCounter();
 			break;
+		}
 		case SC_Seek:
 		{
 			// int Seek(int position, OpenFileId id);
