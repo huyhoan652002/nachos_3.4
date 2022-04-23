@@ -375,9 +375,8 @@ void ExceptionHandler(ExceptionType which)
 			}
 			else
 			{
-				cout << numBytes << " bytes read" << endl;
+				System2User(virAddr, numBytes, buffer);
 			}
-			System2User(virAddr, numBytes, buffer);
 			kernel->machine->WriteRegister(2, numBytes);
 			delete[] buffer;
 			ProgramCounter();
@@ -397,9 +396,8 @@ void ExceptionHandler(ExceptionType which)
 			}
 			else
 			{
-				cout << numBytes << " bytes written" << endl;
+				System2User(VirAddr, numBytes, buffer);
 			}
-			System2User(VirAddr, numBytes, buffer);
 			kernel->machine->WriteRegister(2, numBytes);
 			delete[] buffer;
 			ProgramCounter();
