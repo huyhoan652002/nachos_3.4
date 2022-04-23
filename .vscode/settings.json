@@ -2,6 +2,7 @@
     "files.associations": {
         "syscall.h": "c",
         "*.tcc": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "memory_resource": "c"
     }
 }

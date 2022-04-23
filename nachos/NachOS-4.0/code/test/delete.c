@@ -2,6 +2,6 @@
 
 int main()
 {
-    Remove("a.txt");
+    Remove("b.txt");
     Halt();
 }

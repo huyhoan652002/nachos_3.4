@@ -2,7 +2,7 @@
 
 int main()
 {
-    int fileID1 = Open("a.txt");
+    int fileID1 = Open("hello.txt");
     int fileID2 = Open("b.txt");
     char temp;
     int size = Seek(-1, fileID1);

@@ -8,7 +8,7 @@ int main()
     PrintNum(fd);
     PrintString("\n");
     
-    fd = Create("overGeared.txt");
+    fd = Create("b.txt");
     
     // Create("testCreateFile.txt");
     // Halt();
