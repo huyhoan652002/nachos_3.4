@@ -112,7 +112,7 @@ ifeq ($(hosttype),unknown)
 PROGRAMS = unknownhost
 else
 # change this if you create a new test program!
-PROGRAMS = add halt shell matmult sort segments help ascii createfile bubblesort checkChar test
+PROGRAMS = add halt shell matmult sort segments help ascii createfile bubblesort checkChar test cat concatnate copy delete
 endif
 
 all: $(PROGRAMS)
@@ -174,6 +174,30 @@ test.o: test.c
 test: test.o start.o
 	$(LD) $(LDFLAGS) start.o test.o -o test.coff
 	$(COFF2NOFF) test.coff test
+
+cat.o: cat.c
+	$(CC) $(CFLAGS) -c cat.c
+cat: cat.o start.o
+	$(LD) $(LDFLAGS) start.o cat.o -o cat.coff
+	$(COFF2NOFF) cat.coff cat
+
+copy.o: copy.c
+	$(CC) $(CFLAGS) -c copy.c
+copy: copy.o start.o
+	$(LD) $(LDFLAGS) start.o copy.o -o copy.coff
+	$(COFF2NOFF) copy.coff copy
+
+concatnate.o: concatnate.c
+	$(CC) $(CFLAGS) -c concatnate.c
+concatnate: concatnate.o start.o
+	$(LD) $(LDFLAGS) start.o concatnate.o -o concatnate.coff
+	$(COFF2NOFF) concatnate.coff concatnate
+
+delete.o: delete.c
+	$(CC) $(CFLAGS) -c delete.c
+delete: delete.o start.o
+	$(LD) $(LDFLAGS) start.o delete.o -o delete.coff
+	$(COFF2NOFF) delete.coff delete
 
 segments.o: segments.c
 	$(CC) $(CFLAGS) -c segments.c

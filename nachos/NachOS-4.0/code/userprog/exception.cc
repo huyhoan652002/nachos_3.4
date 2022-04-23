@@ -341,7 +341,6 @@ void ExceptionHandler(ExceptionType which)
 			}
 			break;
 		}
-		
 		case SC_Open:
 		{
 			DEBUG(dbgSys, "Open system call.\n");
