@@ -225,7 +225,7 @@ void Kernel::ReadNum(int to_register)
             {
                 is_int = true;
             }
-            else if(buffer[size] == '\n')
+            else if (buffer[size] == '\n')
             {
                 is_int = true;
             }
@@ -272,7 +272,14 @@ void Kernel::ReadString(int to_addr, char *buffer, int size)
 
         i++;
     } while (buffer[i - 1] != '\n' && buffer[i - 1] != '\0');
+
     buffer[i - 1] = '\0';
+
+    for (int i = size - 1; i >= 0; i--)
+    {
+        if (buffer[i] == '\n')
+            buffer[i] = '\0';
+    }
 }
 
 void Kernel::RandomNumber()
@@ -296,21 +303,156 @@ void Kernel::PrintChar(char ch)
     synchConsoleOut->PutChar(ch);
 }
 
-// // read
-// int Kernel::Read(char *buffer, int size, OpenFileID id)
-// {
-//     return synchDisk->ReadSector(buffer, size, id);
-// }
+// remove
+int Kernel::Remove(char *fileName)
+{
+    if (fileName == NULL)
+    {
+        return -1;
+    }
+    if (strlen(fileName) == 0)
+    {
+        return -1;
+    }
+    return fileSystem->Remove(fileName);
+}
 
-// int Kernel::Write(char *buffer, int size, OpenFileID id)
-// {
-//     return synchDisk->WriteSector(buffer, size, id);
-// }
+// open
+int Kernel::Open(char *name)
+{
+    if (name == NULL)
+    {
+        return -1;
+    }
 
-// int Kernel::Seek(int position, OpenFileID id)
-// {
-//     return synchDisk->Seek(position, id);
-// }
+    for (int i = 0; i < 50; ++i)
+    {
+        if (fileSystem->tableOfFiles[i] != NULL && strcmp(fileSystem->tableOfFiles[i]->fileName, name) == 0)
+        {
+            return i;
+        }
+    }
+
+    int emptySlot = -1;
+    for (int i = 2; i < 50; ++i)
+    {
+        if (fileSystem->tableOfFiles[i] == NULL)
+        {
+            emptySlot = i;
+            break;
+        }
+    }
+    if (emptySlot == -1)
+    {
+        return -1;
+    }
+    fileSystem->tableOfFiles[emptySlot] = fileSystem->Open(name);
+    if (fileSystem->tableOfFiles[emptySlot] == NULL)
+    {
+        return -1;
+    }
+    fileSystem->tableOfFiles[emptySlot]->fileName = new char[strlen(name) + 1];
+    strcpy(fileSystem->tableOfFiles[emptySlot]->fileName, name);
+    return emptySlot;
+}
+
+// Check if a file is open
+// Input: filename
+// Output: 1 if the file is open, 0 if the file is closed or not exist
+bool Kernel::isOpen(char *fname)
+{
+    int fileId = -1;
+
+    // Seek for the file in system
+    for (int i = 0; i < 50; ++i)
+    {
+        if (fileSystem->tableOfFiles[i] != NULL && strcmp(fileSystem->tableOfFiles[i]->fileName, fname) == 1)
+        {
+            fileId = i;
+            break;
+        }
+    }
+
+    // File is not open.
+    if (fileId == -1)
+        return 0;
+
+    // File is open
+    else
+        return 1;
+}
+
+int Kernel::Close(int fileId)
+{
+    if (fileId < 0 || fileId >= 50)
+    {
+        return -1;
+    }
+    if (fileSystem->tableOfFiles[fileId] == NULL)
+    {
+        return -1;
+    }
+
+    delete fileSystem->tableOfFiles[fileId];
+    fileSystem->tableOfFiles[fileId] = NULL;
+    return 0;
+}
+// read
+int Kernel::Read(char *buffer, int size, int id)
+{
+    if (id < 0 || id >= 50)
+    {
+        return -1;
+    }
+    if (fileSystem->tableOfFiles[id] == NULL)
+    {
+        return -1;
+    }
+    int result = fileSystem->tableOfFiles[id]->Read(buffer, size);
+    return result;
+}
+
+// write
+int Kernel::Write(char *buffer, int size, int id)
+{
+    if (id < 0 || id >= 50)
+    {
+        return -1;
+    }
+    if (fileSystem->tableOfFiles[id] == NULL)
+    {
+        return -1;
+    }
+    int result = fileSystem->tableOfFiles[id]->Write(buffer, size);
+    return result;
+}
+
+// seek
+int Kernel::Seek(int position, int id)
+{
+    if (id < 0 || id >= 50)
+    {
+        return -1;
+    }
+    if (fileSystem->tableOfFiles[id] == NULL)
+    {
+        return -1;
+    }
+    if (position == -1)
+        position = fileSystem->tableOfFiles[id]->Length();
+    if (position < 0)
+        position = 0;
+    int numbytes = fileSystem->tableOfFiles[id]->Seek(position);
+    if (numbytes >= 0)
+    {
+        return numbytes;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 //----------------------------------------------------------------------
 // Kernel::NetworkTest
 //      Test whether the post office is working. On machines #0 and #1, do:
