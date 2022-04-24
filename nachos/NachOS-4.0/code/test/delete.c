@@ -6,6 +6,6 @@ int main()
     int del;
     PrintString("Enter filename: ");
     ReadString(filename, 100);
-    del = Remove("a.txt");
+    del = Remove(filename);
     Halt();
 }

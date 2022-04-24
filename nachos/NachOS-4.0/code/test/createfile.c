@@ -2,14 +2,12 @@
 
 int main()
 {
-    int fd = 1;
-    
+    int fd;
+    char* fileName;
+    PrintString("Enter filename: ");
+    ReadString(fileName, 100);
     PrintString("\n");
-    PrintNum(fd);
-    PrintString("\n");
     
-    fd = Create("overGeared.txt");
-    
-    // Create("testCreateFile.txt");
-    // Halt();
+    fd = Create(fileName);
+    Halt();
 }
