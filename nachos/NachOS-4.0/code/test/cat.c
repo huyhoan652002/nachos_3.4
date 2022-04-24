@@ -1,10 +1,20 @@
 #include "syscall.h"
 
+// yêu cầu nhập filename, rồi hiển thị nội dung của file đó
+
 int main()
 {
-    int fileID = Open("hello.txt");
+    char* filename;
+    int fileID;
     char temp;
-    int size = Seek(-1, fileID);
+    int size;
+    
+    PrintString("Enter file name: ");
+    ReadString(filename, 33);
+
+    fileID = Open(filename);
+    size = Seek(-1, fileID);
+
     Seek(0, fileID);
     while (size > 0)
     {

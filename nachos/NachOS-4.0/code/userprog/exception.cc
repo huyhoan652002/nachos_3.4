@@ -82,7 +82,7 @@ char *User2System(int virtAddr, int limit)
 }
 
 // Input: address of User(int), limit of buffer(int), buffer(char*) that store the data
-// Output: So byte da sao chep(int)
+// Output: Number of copied bytes(int) from Kernel to User program.
 // Function: Copy memory from System memory to User memory (buffer to virtAddr)
 int System2User(int virtAddr, int len, char *buffer)
 {
@@ -219,21 +219,6 @@ void ExceptionHandler(ExceptionType which)
 				return;
 			}
 
-			// OpenFile *oFile = kernel->fileSystem->Open(name);
-			// if (oFile == NULL)
-			// {
-			// 	printf("\nExec:: Can't open this file.");
-			// 	kernel->machine->WriteRegister(2,-1);
-			// 	ProgramCounter();
-			// 	return;
-			// }
-
-			// delete oFile;
-
-			// // Return child process id
-			// int id = pTab->ExecUpdate(name);
-			// kernel->machine->WriteRegister(2,id);
-
 			delete[] name;
 			ProgramCounter();
 			return;
@@ -271,6 +256,7 @@ void ExceptionHandler(ExceptionType which)
 					DEBUG(dbgAddr, "Filename is not valid\n");
 					kernel->machine->WriteRegister(2, -1); // return -1 to user program
 
+					ProgramCounter();
 					break;
 				}
 
@@ -281,6 +267,7 @@ void ExceptionHandler(ExceptionType which)
 					kernel->machine->WriteRegister(2, -1); // return -1 to user program
 
 					delete filename;
+					ProgramCounter();
 					break;
 				}
 
@@ -295,6 +282,7 @@ void ExceptionHandler(ExceptionType which)
 					kernel->machine->WriteRegister(2, -1); // return -1 to user program
 
 					delete filename;
+					ProgramCounter();
 					break;
 				}
 				else
@@ -304,6 +292,7 @@ void ExceptionHandler(ExceptionType which)
 					printf("\nSuccess to create file '%s'\n", filename);
 
 					delete filename;
+					ProgramCounter();
 					break;
 				}
 			}
@@ -313,12 +302,14 @@ void ExceptionHandler(ExceptionType which)
 			DEBUG(dbgSys, "Remove system call.\n");
 			// SysRemove((char *)kernel->machine->ReadRegister(4));
 			int virArr = kernel->machine->ReadRegister(4);
-			char* filename = User2System(virArr, MAX_FILENAME_LEN + 1);
+			char *filename = User2System(virArr, MAX_FILENAME_LEN + 1);
 			if (filename == NULL)
 			{
 				printf("\nNot enough memory in system\n");
 				DEBUG(dbgAddr, "Not enough memory in system\n");
 				kernel->machine->WriteRegister(2, -1); // return -1 to user program
+				
+				ProgramCounter();
 				break;
 			}
 			bool success = kernel->fileSystem->Remove(filename);
@@ -330,6 +321,7 @@ void ExceptionHandler(ExceptionType which)
 				kernel->machine->WriteRegister(2, -1); // return -1 to user program
 
 				delete filename;
+				ProgramCounter();
 				break;
 			}
 			else
@@ -339,6 +331,7 @@ void ExceptionHandler(ExceptionType which)
 				printf("\nSuccess to remove file '%s'\n", filename);
 
 				delete filename;
+				ProgramCounter();
 				break;
 			}
 			break;
@@ -422,6 +415,7 @@ void ExceptionHandler(ExceptionType which)
 			break;
 		}
 		// end of hoan
+		
 		// SC_close: Syscall to close a file
 		case SC_Close:
 		{

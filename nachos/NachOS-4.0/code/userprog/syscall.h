@@ -70,7 +70,6 @@ void Halt();
 /*
  * Add the two operants and return the result
  */ 
-
 int Add(int op1, int op2);
 
 /* Address space control operations: Exit, Exec, Execv, and Join */
