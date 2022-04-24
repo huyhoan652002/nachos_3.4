@@ -52,6 +52,7 @@
 //	is in machine.h.
 //----------------------------------------------------------------------
 
+#define MAX_FILENAME_LEN 33 // Max filename length: 32 + null terminator
 
 // Input: address of User(int), limit of buffer(int)
 // Output: a recoreded Buffer (char*)
@@ -218,6 +219,21 @@ void ExceptionHandler(ExceptionType which)
 				return;
 			}
 
+			// OpenFile *oFile = kernel->fileSystem->Open(name);
+			// if (oFile == NULL)
+			// {
+			// 	printf("\nExec:: Can't open this file.");
+			// 	kernel->machine->WriteRegister(2,-1);
+			// 	ProgramCounter();
+			// 	return;
+			// }
+
+			// delete oFile;
+
+			// // Return child process id
+			// int id = pTab->ExecUpdate(name);
+			// kernel->machine->WriteRegister(2,id);
+
 			delete[] name;
 			ProgramCounter();
 			return;
@@ -296,39 +312,14 @@ void ExceptionHandler(ExceptionType which)
 			DEBUG(dbgSys, "Remove system call.\n");
 			int virArr = kernel->machine->ReadRegister(4);
 			char* filename = User2System(virArr, MAX_FILENAME_LEN + 1);
-			
-			if (strlen(filename) == 0)
-			{
-				printf("\nFilename is empty\n");
-				DEBUG(dbgAddr, "Filename is not valid\n");
-				kernel->machine->WriteRegister(2, -1); // return -1 to user program
-
-				break;
-			}
-
 			if (filename == NULL)
 			{
-				printf("\nName should not be null.\n");
-				DEBUG(dbgAddr, "Name should not be null.\n");
-				
+				printf("\nNot enough memory in system\n");
+				DEBUG(dbgAddr, "Not enough memory in system\n");
 				kernel->machine->WriteRegister(2, -1); // return -1 to user program
-				
-				delete filename;
 				break;
 			}
-
-			if (kernel->isOpen(filename))	//  If the file is open, stop removing.
-			{
-				printf("\nThe file is now open. Close the file to remove.\n");
-				DEBUG(dbgAddr, "The file is now open. Close the file to remove.\n");
-				
-				kernel->machine->WriteRegister(2, -1); // return -1 to user program
-				
-				delete filename;
-				break;
-			}
-			
-			bool success = 1; //kernel->fileSystem->Remove(filename);
+			bool success = kernel->fileSystem->Remove(filename);
 			if (!success)
 			{
 				// Fail to remove file

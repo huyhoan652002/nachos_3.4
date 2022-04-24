@@ -14,7 +14,6 @@
 #include "kernel.h"
 
 
-#define MAX_FILENAME_LEN 33 // Max filename length: 32 + null terminator
 
 
 void SysHalt()

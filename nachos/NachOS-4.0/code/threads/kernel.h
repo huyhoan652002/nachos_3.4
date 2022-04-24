@@ -62,28 +62,129 @@ public:
   void PrintChar(char ch);
 
   // remove
-  int Remove(char* fileName);
+  int Remove(char* fileName)
+  {
+    if(fileName == NULL)
+    {
+      return -1;
+    }
+    if(strlen(fileName) == 0)
+    {
+      return -1;
+    }
+    return fileSystem->Remove(fileName);
+  }
 
   // open
-  int Open(char *name);
+  int Open(char *name)
+  {
+    if (name == NULL)
+    {
+      return -1;
+    }
 
-  // Check if a file is open
-  // Input: filename
-  // Output: 1 if the file is open, 0 if the file is closed or not exist
-  bool isOpen(char* fname);
+    for (int i = 0; i < 50; ++i)
+    {
+      if (fileSystem->tableOfFiles[i] != NULL && strcmp(fileSystem->tableOfFiles[i]->fileName, name) == 0)
+      {
+        return i;
+      }
+    }
 
-  int Close(int fileId);
-  
+    int emptySlot = -1;
+    for (int i = 2; i < 50; ++i)
+    {
+      if (fileSystem->tableOfFiles[i] == NULL)
+      {
+        emptySlot = i;
+        break;
+      }
+    }
+    if (emptySlot == -1)
+    {
+      return -1;
+    }
+    fileSystem->tableOfFiles[emptySlot] = fileSystem->Open(name);
+    if (fileSystem->tableOfFiles[emptySlot] == NULL)
+    {
+      return -1;
+    }
+    fileSystem->tableOfFiles[emptySlot]->fileName = new char[strlen(name) + 1];
+    strcpy(fileSystem->tableOfFiles[emptySlot]->fileName, name);
+    return emptySlot;
+  }
+
+  int Close(int fileId)
+  {
+    if (fileId < 0 || fileId >= 50)
+    {
+      return -1;
+    }
+    if (fileSystem->tableOfFiles[fileId] == NULL)
+    {
+      return -1;
+    }
+
+    delete fileSystem->tableOfFiles[fileId];
+    fileSystem->tableOfFiles[fileId] = NULL;
+    return 0;
+  }
   // read
-  int Read(char *buffer, int size, int id);
+  int Read(char *buffer, int size, int id)
+  {
+    if (id < 0 || id >= 50)
+    {
+      return -1;
+    }
+    if (fileSystem->tableOfFiles[id] == NULL)
+    {
+      return -1;
+    }
+    int result = fileSystem->tableOfFiles[id]->Read(buffer, size);
+    return result;
+  }
 
   // write
-  int Write(char *buffer, int size, int id);
+  int Write(char *buffer, int size, int id)
+  {
+    if (id < 0 || id >= 50)
+    {
+      return -1;
+    }
+    if (fileSystem->tableOfFiles[id] == NULL)
+    {
+      return -1;
+    }
+    int result = fileSystem->tableOfFiles[id]->Write(buffer, size);
+    return result;
+  }
 
   // seek
-  int Seek(int position, int id);
+  int Seek(int position, int id)
+  {
+    if (id < 0 || id >= 50)
+    {
+      return -1;
+    }
+    if (fileSystem->tableOfFiles[id] == NULL)
+    {
+      return -1;
+    }
+    if (position == -1)
+      position = fileSystem->tableOfFiles[id]->Length();
+    if (position < 0)
+      position = 0;
+    int numbytes = fileSystem->tableOfFiles[id]->Seek(position);
+    if (numbytes >= 0)
+    {
+      return numbytes;
+    }
+    else
+    {
+      return -1;
+    }
+  }
 
-  
   // These are public for notational convenience; really,
   // they're global variables used everywhere.
 
