@@ -2,6 +2,10 @@
 
 int main()
 {
-    Remove("a.txt");
+    char* filename;
+    int del;
+    PrintString("Enter filename: ");
+    ReadString(filename, 100);
+    del = Remove("a.txt");
     Halt();
 }

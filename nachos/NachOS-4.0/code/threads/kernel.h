@@ -62,6 +62,8 @@ public:
   void PrintChar(char ch);
 
   // remove
+  // input filename
+  // output: the notify that said to me that the file is deleted of not exist
   int Remove(char* fileName)
   {
     if(fileName == NULL)
@@ -76,6 +78,8 @@ public:
   }
 
   // open
+  // input filename
+  // output: the notify that said to me that the file is opened or not exist
   int Open(char *name)
   {
     if (name == NULL)
@@ -113,7 +117,9 @@ public:
     strcpy(fileSystem->tableOfFiles[emptySlot]->fileName, name);
     return emptySlot;
   }
-
+  // close
+  // input fileID
+  // output: the notify that said to me that the file is closed or not exist
   int Close(int fileId)
   {
     if (fileId < 0 || fileId >= 50)
@@ -130,6 +136,8 @@ public:
     return 0;
   }
   // read
+  // input fileID, buffer, size
+  // output: the notify that said to me that the file is read or not exist
   int Read(char *buffer, int size, int id)
   {
     if (id < 0 || id >= 50)
@@ -145,6 +153,8 @@ public:
   }
 
   // write
+  // input fileID, buffer, size
+  // output: the notify that said to me that the file is write or not exist
   int Write(char *buffer, int size, int id)
   {
     if (id < 0 || id >= 50)
@@ -160,6 +170,8 @@ public:
   }
 
   // seek
+  // input fileID, position
+  // output: the notify that said to me that the pointer is moved to the position or not exist
   int Seek(int position, int id)
   {
     if (id < 0 || id >= 50)

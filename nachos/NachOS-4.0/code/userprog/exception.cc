@@ -248,6 +248,7 @@ void ExceptionHandler(ExceptionType which)
 			// SysJoin(type);
 			ASSERTNOTREACHED();
 			break;
+		// SC_create: create a file
 		case SC_Create:
 			/* Create a Nachos file, with name "name" */
 			/* Note: Create does not open the file.   */
@@ -306,10 +307,11 @@ void ExceptionHandler(ExceptionType which)
 					break;
 				}
 			}
-
+		// SC_Remove: Remove a Nachos file, with name "name"
 		case SC_Remove:
 		{
 			DEBUG(dbgSys, "Remove system call.\n");
+			// SysRemove((char *)kernel->machine->ReadRegister(4));
 			int virArr = kernel->machine->ReadRegister(4);
 			char* filename = User2System(virArr, MAX_FILENAME_LEN + 1);
 			if (filename == NULL)
@@ -341,6 +343,7 @@ void ExceptionHandler(ExceptionType which)
 			}
 			break;
 		}
+		// SC_open: Open a file
 		case SC_Open:
 		{
 			DEBUG(dbgSys, "Open system call.\n");
@@ -361,6 +364,7 @@ void ExceptionHandler(ExceptionType which)
 			break;
 		}
 		// hoan
+		// SC_Read: Read from a Nachos file, at location "into".
 		case SC_Read:
 		{
 			DEBUG(dbgSys, "Read system call.\n");
@@ -382,6 +386,7 @@ void ExceptionHandler(ExceptionType which)
 			ProgramCounter();
 			break;
 		}
+		// SC_Write: Write "size" bytes from "buffer" to the open file.
 		case SC_Write:
 		{
 			DEBUG(dbgSys, "Write system call.\n");
@@ -403,6 +408,7 @@ void ExceptionHandler(ExceptionType which)
 			ProgramCounter();
 			break;
 		}
+		// SC_Seek: system call to move the file pointer
 		case SC_Seek:
 		{
 			// int Seek(int position, OpenFileId id);
@@ -416,6 +422,7 @@ void ExceptionHandler(ExceptionType which)
 			break;
 		}
 		// end of hoan
+		// SC_close: Syscall to close a file
 		case SC_Close:
 		{
 			DEBUG(dbgSys, "Close system call.\n");
